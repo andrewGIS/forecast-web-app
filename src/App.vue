@@ -11,22 +11,21 @@
     </v-app-bar>
 
     <v-main>
-      <HelloWorld/>
+      <Map/>
     </v-main>
 
-    <v-footer></v-footer>
 
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import Map from './components/Map';
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    Map
   },
 
   data: () => ({
