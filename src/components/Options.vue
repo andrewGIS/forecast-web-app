@@ -1,49 +1,127 @@
 <template>
-  <l-control position="bottomleft" >
+  <v-snackbar left bottom :value="isVisible" timeout="-1" max-width="100">
     <v-container fluid>
-        <br> Тип прогноза         
+      <v-row justify="end">
+        <v-btn class="mx-4" icon @click="setConfigVisibility(false)">
+          <v-icon size="24px"> mdi-close </v-icon>
+        </v-btn>
+      </v-row>
+      <v-row>
         <v-select
-          :items="forecastType"
+          :items="forecastTypes"
+          v-model="selectedforecastType"
           filled
-          label="Filled style"
+          label="Тип прогноза"
           dense
           solo
         ></v-select>
-        <br> Модель
-                <v-select
+      </v-row>
+
+      <v-row>
+        <v-select
           :items="models"
+          v-model="selectedModel"
           filled
-          label="Filled style"
+          label="Модель"
           dense
           solo
         ></v-select>
-        <br> Явление
-                <v-select
-          :items="items"
+      </v-row>
+
+      <v-row>
+        <v-select
+          label="Выберите группу"
+          :items="eventGroups"
+          item-text="alias"
+          v-model="selectedEvent"
           filled
-          label="Filled style"
           dense
           solo
+          return-object
         ></v-select>
+      </v-row>
     </v-container>
-  </l-control>
+  </v-snackbar>
 </template>
 
 <script>
-import { LControl } from 'vue2-leaflet'
+import { mapState, mapMutations } from "vuex";
+
 export default {
-  data:()=>({
-    forecastType: ['00', '12'],
-    models: ['gfs', 'icon'],
-    items:['Foo', 'Bar', 'Fizz', 'Buzz']
+  data: () => ({
+    forecastTypes: ["00", "12"],
+    models: ["gfs", "icon"],
+    eventGroups: []
   }),
-  name: 'Options',
+  name: "Options",
   components: {
-    LControl
+    // LControl
+  },
+  computed: {
+    ...mapState({
+      isVisible: "isConfigVisible"
+    }),
+    selectedforecastType: {
+      get() {
+        return this.$store.state.selectedForescatType;
+      },
+      set(value) {
+        this.setForecastTypes(value);
+      }
+    },
+    selectedModel: {
+      get() {
+        return this.$store.state.selectedModel;
+      },
+      set(value) {
+        this.setModel(value);
+      }
+    },
+    selectedEvent: {
+      get() {
+        return this.$store.state.selectedEvent;
+      },
+      set(value) {
+        this.setSelectedEvent(value);
+      }
+    }
+  },
+  methods: {
+    ...mapMutations({
+      setConfigVisibility: "SET_CONFIG_VISIBILITY",
+      setForecastTypes: "SET_FORECAST_TYPE",
+      setModel: "SET_MODEL",
+      setSelectedEvent: "SET_SELECTED_EVENT"
+    }),
+    getGroups() {
+      fetch("http://localhost:5000/event_groups")
+        .then(data => data.json())
+        .then(res => {
+          
+          // for vuetify correct display transform input object
+          // let newArray = res.map((e =>{
+          //   let newObject = {};
+          //   newObject.alias = e.alias;
+          //   newObject.value = e;
+
+          //   return newObject
+          //   }
+          // ))
+
+          this.eventGroups = res;
+          this.setSelectedEvent(res[0]);
+        })
+        .catch(() => {
+          this.eventGroups = [];
+          this.setSelectedEvent(null);
+        });
+    }
+  },
+  mounted() {
+    this.getGroups();
   }
-}
+};
 </script>
 
 <style>
-
 </style>
