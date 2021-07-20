@@ -1,6 +1,8 @@
 <template>
   <l-map ref="map">
+    <risk-layer/>
     <l-tile-layer :url="osmURL"></l-tile-layer>
+    
     <!-- <Legend/>
           <Options/>
           <date-picker/> -->
@@ -11,12 +13,12 @@
 <script>
 import { LMap, LTileLayer } from "vue2-leaflet";
 // import Legend from './Legend.vue'
-// import Options from './Options.vue'
 // import DatePicker from './DatePicker.vue'
 import Alert from "./Alert.vue";
 import L from "leaflet";
 import "leaflet-geotiff-2";
 import "leaflet-geotiff-2/dist/leaflet-geotiff-plotty"; // requires plotty
+import RiskLayer from "./RiskLayer"
 
 export default {
   name: "Map",
@@ -31,7 +33,8 @@ export default {
     // Legend,
     // Options,
     // DatePicker,
-    Alert
+    Alert,
+    RiskLayer
   },
   mounted() {
     this.$nextTick(() => {
@@ -41,12 +44,13 @@ export default {
         // Optional. Minimum values to plot.
         displayMin: 0,
         // Optional. Maximum values to plot.
-        displayMax: 1,
+        displayMax: 1024,
         // Optional. If true values outside `displayMin` to `displayMax` will be rendered as if they were valid values.
         clampLow: true,
         clampHigh: true,
         // Optional. Plotty color scale used to render the image.
-        colorScale: "viridis"
+        //colorScale: "viridis"
+        colorScale: "greys"
       };
 
       const renderer = L.LeafletGeotiff.plotty(roptions);
@@ -110,7 +114,10 @@ export default {
       var layer = L.leafletGeotiff(
         `http://localhost:8080/temp/gfs.2021051512.003.cape_surface.tif`,
         options
-      ).addTo(this.map);
+      )
+
+      layer.setOpacity(0.5);
+      layer.addTo(this.map);
 
       let popup;
       this.map.on("click", (e) =>{
@@ -121,7 +128,6 @@ export default {
         } else {
           popup.setLatLng([e.latlng.lat, e.latlng.lng]);
         }
-        console.log(e)
         const value = layer.getValueAtLatLng(
           +e.latlng.lat,
           +e.latlng.lng
