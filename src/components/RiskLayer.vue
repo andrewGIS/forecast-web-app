@@ -4,12 +4,22 @@
 
 <script>
 import { LGeoJson } from "vue2-leaflet";
+import { mapGetters, mapState } from 'vuex';
 export default {
   data:() => ({
       GJdata: null
   }),
   name: "RiskLayer",
   computed: {
+    ...mapState([
+      'selectedModel',
+      'selectedForescatType'
+      ]),
+    ...mapGetters([
+      'SELECTED_HOUR',
+      'SELECTED_DATE',
+      'SELECTED_EVENT_GROUP'
+    ]),
     geoJSONData() {
       if (this.geoJSONVisibility && this.GJdata) {
         // return this.$store.getters.GET_FILTERED_GEOJSON;
@@ -50,19 +60,30 @@ export default {
           });
         }
       };
+    },
+    geojsonURL (){
+      // return `${process.env.VUE_APP_API_BASE}/get_forecast/?model=${this.selectedModel}&forecast_type=${this.selectedForescatType}&date=${this.SELECTED_DATE}&hour=${this.SELECTED_HOUR}&group=${this.SELECTED_EVENT_GROUP}`
+      return `${process.env.VUE_APP_API_BASE}/get_forecast/?model=gfs&forecast_type=12&date=20210515&hour=15&group=squall_L2`
     }
   },
   methods: {
-    getGeoJSONData() {
+    getGeoJSONData(url) {
         fetch(
-      `${process.env.VUE_APP_API_BASE}/get_forecast/?model=gfs&forecast_type=12&date=20210515&hour=15&group=squall_L2`
+      //`${process.env.VUE_APP_API_BASE}/get_forecast/?model=gfs&forecast_type=12&date=20210515&hour=15&group=squall_L2`
+      url
+      
     )
       .then(res => res.json())
-      .then(data => this.GJdata = data);
+      .then(data => data);
     }
   },
-  mounted (){
-      this.getGeoJSONData()
+  // mounted (){
+  //     this.getGeoJSONData()
+  // },
+  watch:{
+    geojsonURL: function(url){
+      this.GJdata = this.getGeoJSONData(url);
+    }
   },
   components: { LGeoJson }
 };
