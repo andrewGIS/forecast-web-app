@@ -1,7 +1,13 @@
 <template>
-  <l-control position="bottomright" >
-    <v-container class="main_container">
-        <!-- <b-row>
+  <!-- <l-control position="bottomright" > -->
+  <v-snackbar
+    v-model="snackbar"
+    timeout="-1"
+    right
+    width=30
+    app
+  >
+      <!-- <b-row>
             <div class='legend-title'>Легенда
             </div>
         </b-row>
@@ -25,75 +31,63 @@
                 </div>
             </b-col>
         </b-row> -->
-        Легенда
-    </v-container>
-  </l-control>
+      Легенда
+  </v-snackbar>
+  <!-- </l-control> -->
 </template>
 
 <script>
-import { LControl } from 'vue2-leaflet'
+// import { LControl } from 'vue2-leaflet'
 export default {
-  name: 'Legend',
+  data: () => ({
+    snackbar: true
+  }),
+  name: "Legend",
   computed: {
-    legendData () {
-      return {}
+    legendData() {
+      return {};
     },
-    colorMaps () {
+    colorMaps() {
       if (!this.$_.isEmpty(this.legendData)) {
-        return this.legendData.Legend[0].rules[0].symbolizers[0].Raster.colormap.entries
+        return this.legendData.Legend[0].rules[0].symbolizers[0].Raster.colormap
+          .entries;
       } else {
-        return {}
+        return {};
       }
     },
-    sortedColorMaps () {
+    sortedColorMaps() {
       if (!this.$_.isEmpty(this.legendData)) {
-        const initArray = this.colorMaps
+        const initArray = this.colorMaps;
         return initArray.sort((a, b) => {
-          return -(parseFloat(a.quantity) - parseFloat(b.quantity))
-        })
+          return -(parseFloat(a.quantity) - parseFloat(b.quantity));
+        });
       } else {
-        return {}
+        return {};
       }
     },
-    colorString () {
+    colorString() {
       if (!this.$_.isEmpty(this.legendData)) {
-        return this.$_.map(this.sortedColorMaps, 'color').join(',')
+        return this.$_.map(this.sortedColorMaps, "color").join(",");
       } else {
-        return ''
+        return "";
       }
     },
-    units () {
+    units() {
       if (!this.$_.isEmpty(this.legendData)) {
-        return `${this.legendData.Legend[0].rules[0].title}`
+        return `${this.legendData.Legend[0].rules[0].title}`;
       } else {
-        return 'Нет данных'
+        return "Нет данных";
       }
     },
-    visible () {
-      return true
+    visible() {
+      return true;
     }
   },
   components: {
-    LControl
+    // LControl
   }
-}
+};
 </script>
 
 <style>
-  .color {
-    width: 15px;
-    height: 100%;
-  }
-  .labels p {
-    margin: 0;
-    padding:0;
-  }
-  .main_container {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    background:white;
-    border-radius:0.25rem;
-  }
-  .legend-title {
-    font-weight: bold;
-  }
 </style>
