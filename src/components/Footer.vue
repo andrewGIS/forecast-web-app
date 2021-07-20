@@ -9,6 +9,7 @@
       </v-col>
 
       <!-- Date and hour picker -->
+      <!-- TODO Extract date picker to separate component-->
       <v-col cols="9" сlass="text-center">
         Время прогноза
 
@@ -21,6 +22,7 @@
             v-for="(date, index) in generateForecastDates"
             :key="index"
             v-slot="{ active, toggle }"
+            :value="date"
           >
             <v-btn
               class="mx-2"
@@ -52,23 +54,37 @@
 import { mapMutations, mapState } from "vuex";
 
 export default {
-  data: () => ({
-    selectedDate: null
-  }),
   computed: {
     ...mapState(['selectedForescatType']),
+    selectedDate:{
+      get(){
+        return this.$store.state.selectedDate
+      },
+      set(value){
+        this.setDate(value)
+      }
+    },
     generateForecastDates() {
       let currentDate = new Date();
       let currentHours = currentDate.getHours();
       let startDate;
       let outDates = [];
 
-      if (currentHours < 12 && this.selectedForescatType === '00') {
-        startDate = new Date(currentDate.setHours(0, 0, 0));
-      } else {
-        startDate = new Date(currentDate.setHours(12, 0, 0));
+      // if possible refactor
+      if (currentHours < 12 && this.selectedForescatType === "00"){
+        startDate = new Date(currentDate.setHours(0, 0, 0))
       }
-      startDate = this.shiftDate(startDate, "Hours", -24);
+      if (currentHours < 12 && this.selectedForescatType === "12"){
+        startDate = new Date(currentDate.setHours(12, 0, 0))
+        startDate = this.shiftDate(startDate, "Hours", -24);
+      }
+      if(currentHours > 12 && this.selectedForescatType === "00"){
+        startDate = new Date(currentDate.setHours(0, 0, 0))
+      }
+      if(currentHours > 12 && this.selectedForescatType === "12"){
+        startDate = new Date(currentDate.setHours(12, 0, 0))
+      }
+      
 
       for (let index = 0; index < 8; index++) {
         let newValue = new Date(this.shiftDate(startDate, "Hours", 3));
@@ -79,7 +95,10 @@ export default {
     }
   },
   methods: {
-    ...mapMutations({ setConfigVisibility: "SET_CONFIG_VISIBILITY" }),
+    ...mapMutations({ 
+      setConfigVisibility: "SET_CONFIG_VISIBILITY",
+      setDate: "SET_SELECTED_DATE"
+      }),
     shiftDate(date, what, count) {
       let proc1 = "get" + what,
         proc2 = "set" + what;
@@ -103,10 +122,10 @@ export default {
       };
 
       return full ? hourMap[hour] : hourMap[hour].split(':')[0] ;
-    },
-    setSelectedDate(date) {
-      this.selectedDate = date;
     }
+  },
+  mounted(){
+    this.selectedDate = this.generateForecastDates[0];
   }
 };
 </script>

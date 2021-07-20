@@ -23,6 +23,9 @@ export default new Vuex.Store({
     },
     SET_SELECTED_EVENT(state, payload){
       state.selectedEvent = payload
+    },
+    SET_SELECTED_DATE(state, payload){
+      state.selectedDate = payload
     }
   },
   actions: {
