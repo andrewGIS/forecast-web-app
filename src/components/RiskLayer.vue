@@ -55,7 +55,7 @@ export default {
   methods: {
     getGeoJSONData() {
         fetch(
-      "http://localhost:5000/get_forecast/?model=gfs&forecast_type=12&date=20210515&hour=15&group=squall_L2"
+      `${process.env.VUE_APP_API_BASE}/get_forecast/?model=gfs&forecast_type=12&date=20210515&hour=15&group=squall_L2`
     )
       .then(res => res.json())
       .then(data => this.GJdata = data);

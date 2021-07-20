@@ -94,7 +94,7 @@ export default {
       setSelectedEvent: "SET_SELECTED_EVENT"
     }),
     getGroups() {
-      fetch("http://localhost:5000/event_groups")
+      fetch(`${process.env.VUE_APP_API_BASE}/event_groups`)
         .then(data => data.json())
         .then(res => {
           
