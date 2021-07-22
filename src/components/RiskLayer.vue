@@ -7,7 +7,7 @@ import { LGeoJson } from "vue2-leaflet";
 import { mapGetters, mapState } from 'vuex';
 export default {
   data:() => ({
-      GJdata: null
+      data: null
   }),
   name: "RiskLayer",
   computed: {
@@ -21,9 +21,9 @@ export default {
       'SELECTED_EVENT_GROUP'
     ]),
     geoJSONData() {
-      if (this.geoJSONVisibility && this.GJdata) {
+      if (this.geoJSONVisibility && this.data) {
         // return this.$store.getters.GET_FILTERED_GEOJSON;
-        return this.GJdata
+        return this.data
       } else {
         return [];
       }
@@ -62,27 +62,36 @@ export default {
       };
     },
     geojsonURL (){
-      // return `${process.env.VUE_APP_API_BASE}/get_forecast/?model=${this.selectedModel}&forecast_type=${this.selectedForescatType}&date=${this.SELECTED_DATE}&hour=${this.SELECTED_HOUR}&group=${this.SELECTED_EVENT_GROUP}`
-      return `${process.env.VUE_APP_API_BASE}/get_forecast/?model=gfs&forecast_type=12&date=20210515&hour=15&group=squall_L2`
+      return `${process.env.VUE_APP_API_BASE}/get_forecast/?model=${this.selectedModel}&forecast_type=${this.selectedForescatType}&date=${this.SELECTED_DATE}&hour=${this.SELECTED_HOUR}&group=${this.SELECTED_EVENT_GROUP}`
+      //return `${process.env.VUE_APP_API_BASE}/get_forecast/?model=gfs&forecast_type=12&date=20210515&hour=15&group=squall_L2`
     }
   },
   methods: {
-    getGeoJSONData(url) {
-        fetch(
+    async getGeoJSONData(url) {
+
       //`${process.env.VUE_APP_API_BASE}/get_forecast/?model=gfs&forecast_type=12&date=20210515&hour=15&group=squall_L2`
-      url
+      let response = await fetch(url)
       
-    )
-      .then(res => res.json())
-      .then(data => data);
+      //.then(res => res.json())
+      //.then(data => data)
+      //.catch(err=> console.log(err))
+
+      let result = await response.json()
+      //let data = await result.resolve();
+
+      return result;
     }
   },
   // mounted (){
   //     this.getGeoJSONData()
   // },
   watch:{
-    geojsonURL: function(url){
-      this.GJdata = this.getGeoJSONData(url);
+    geojsonURL(){
+      //console.log(this.geojsonURL);
+      // # TODO check it go it to async method
+      this.getGeoJSONData(this.geojsonURL).then(data => this.data = data)
+      //console.log(this.getGeoJSONData(this.geojsonURL));
+      //this.data = this.getGeoJSONData(this.geojsonURL);
     }
   },
   components: { LGeoJson }
