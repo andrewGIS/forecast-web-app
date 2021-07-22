@@ -78,10 +78,10 @@ export default {
         startDate = new Date(currentDate.setHours(12, 0, 0))
         startDate = this.shiftDate(startDate, "Hours", -24);
       }
-      if(currentHours > 12 && this.selectedForescatType === "00"){
+      if(currentHours >= 12 && this.selectedForescatType === "00"){
         startDate = new Date(currentDate.setHours(0, 0, 0))
       }
-      if(currentHours > 12 && this.selectedForescatType === "12"){
+      if(currentHours >= 12 && this.selectedForescatType === "12"){
         startDate = new Date(currentDate.setHours(12, 0, 0))
       }
       
