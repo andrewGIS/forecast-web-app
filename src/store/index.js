@@ -36,7 +36,7 @@ export default new Vuex.Store({
 
       return `${sDate.getFullYear()}${month}${day}`;
     },
-    SELECTED_EVENT_GROUP: state => state.selectedEvent.name
+    SELECTED_EVENT_GROUP: state => state.selectedEvent ? state.selectedEvent.name : null
   },
   mutations: {
     SET_CONFIG_VISIBILITY(state, payload) {
