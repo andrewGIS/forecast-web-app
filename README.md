@@ -20,5 +20,10 @@ npm run build
 npm run lint
 ```
 
+### Test data
+
+Test tif raster is in [./public/temp](./public/temp)
+
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
