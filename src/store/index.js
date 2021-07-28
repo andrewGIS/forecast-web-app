@@ -13,28 +13,19 @@ export default new Vuex.Store({
   },
   getters: {
     SELECTED_HOUR: state => {
-      let hoursMap = {
-        3: "03",
-        6: "06",
-        9: "09",
-        12: "12",
-        15: "15",
-        18: "18",
-        21: "21",
-      };
-
-      return hoursMap[state.selectedDate.getHours()];
+      let hour = state.selectedDate.getUTCHours();
+      return hour = hour < 10 ? `0${hour}:00` : `${hour}:00`  
     },
     SELECTED_DATE: state => {
       let sDate = state.selectedDate;
 
-      let month = sDate.getMonth() + 1;
+      let month = sDate.getUTCMonth() + 1;
       month = month < 10 ? `0${month}` : month.toString();
 
-      let day = sDate.getDate();
+      let day = sDate.getUTCDate();
       day = day < 10 ? `0${day}` : day.toString();
 
-      return `${sDate.getFullYear()}${month}${day}`;
+      return `${sDate.getFullYear()}${month}${day}`;  //sample 20150722
     },
     SELECTED_EVENT_GROUP: state => state.selectedEvent ? state.selectedEvent.name : null
   },
