@@ -13,6 +13,7 @@
     <v-main>
       <Map/>
       <Options/>
+      <Legend/>
     </v-main>
 
     <Footer/>
@@ -23,7 +24,8 @@
 <script>
 import Map from './components/Map';
 import Footer from './components/Footer'
-import Options from './components/Options.vue'
+import Options from './components/Options'
+import Legend from './components/Legend'
 
 export default {
   name: 'App',
@@ -31,7 +33,8 @@ export default {
   components: {
     Map,
     Footer,
-    Options
+    Options,
+    Legend
   },
 
   data: () => ({
