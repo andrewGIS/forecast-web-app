@@ -7,30 +7,7 @@
     app
     :value="isVisible"
   >
-      <!-- <b-row>
-            <div class='legend-title'>Легенда
-            </div>
-        </b-row>
-        <b-row>
-            <div class='units'>Единицы:
-            </div>
-        </b-row>
-        <b-row>
-            <div class='units'> {{this.units}}
-            </div>
-        </b-row>
-        <b-row>
-            <b-col style="padding:0">
-              <div class="color" :style="{'background-image':'linear-gradient(to bottom, '+ colorString +')'}"></div>
-            </b-col>
-            <b-col style="padding:0">
-                <div class="labels">
-                  <template v-for="colorMap in sortedColorMaps">
-                      <p :key="colorMap.quantity"> {{parseFloat(colorMap.quantity).toFixed(1)}} </p>
-                  </template>
-                </div>
-            </b-col>
-        </b-row> -->
+     
     <v-container fluid>
       <v-row align="center">
         <v-col cols="10" >
