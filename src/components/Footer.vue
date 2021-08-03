@@ -39,7 +39,7 @@
 
       <!-- Legend picker -->
       <v-col cols="1" class="text-right">
-        <v-btn class="mx-4" icon>
+        <v-btn class="mx-4" icon @click="setLegendVisibility(true)">
           <v-icon size="24px"> mdi-cog-outline </v-icon>
         </v-btn>
       </v-col>
@@ -96,6 +96,7 @@ export default {
   methods: {
     ...mapMutations({ 
       setConfigVisibility: "SET_CONFIG_VISIBILITY",
+      setLegendVisibility: "SET_LEGEND_VISIBILITY",
       setDate: "SET_SELECTED_DATE"
     }),
     shiftDate(date, what, count) {

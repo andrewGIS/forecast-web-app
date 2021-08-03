@@ -1,49 +1,41 @@
 <template>
   <!-- <l-control position="bottomright" > -->
   <v-snackbar
-    v-model="snackbar"
     timeout="-1"
     right
-    width=30
+    :width="30"
     app
+    :value="isVisible"
   >
-      <!-- <b-row>
-            <div class='legend-title'>Легенда
-            </div>
-        </b-row>
-        <b-row>
-            <div class='units'>Единицы:
-            </div>
-        </b-row>
-        <b-row>
-            <div class='units'> {{this.units}}
-            </div>
-        </b-row>
-        <b-row>
-            <b-col style="padding:0">
-              <div class="color" :style="{'background-image':'linear-gradient(to bottom, '+ colorString +')'}"></div>
-            </b-col>
-            <b-col style="padding:0">
-                <div class="labels">
-                  <template v-for="colorMap in sortedColorMaps">
-                      <p :key="colorMap.quantity"> {{parseFloat(colorMap.quantity).toFixed(1)}} </p>
-                  </template>
-                </div>
-            </b-col>
-        </b-row> -->
-      Легенда
+     
+    <v-container fluid>
+      <v-row align="center">
+        <v-col cols="10" >
+          Легенда
+        </v-col>
+        <v-col cols="1">
+          <v-btn icon @click="setLegendVisibility(false)">
+            <v-icon size="24px"> mdi-close </v-icon>
+          </v-btn>
+        </v-col>  
+      </v-row>
+    </v-container>
   </v-snackbar>
   <!-- </l-control> -->
 </template>
 
 <script>
 // import { LControl } from 'vue2-leaflet'
+import { mapState, mapMutations } from 'vuex'
 export default {
   data: () => ({
     snackbar: true
   }),
   name: "Legend",
   computed: {
+    ...mapState({
+      isVisible: "isLegendVisible"
+    }),
     legendData() {
       return {};
     },
@@ -83,6 +75,11 @@ export default {
       return true;
     }
   },
+  methods: {
+    ...mapMutations({
+      setLegendVisibility: "SET_LEGEND_VISIBILITY"
+    })
+  },  
   components: {
     // LControl
   }
