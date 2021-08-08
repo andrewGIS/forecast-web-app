@@ -15,7 +15,7 @@ export default new Vuex.Store({
   getters: {
     SELECTED_HOUR: state => {
       let hour = state.selectedDate.getUTCHours();
-      return hour = hour < 10 ? `0${hour}:00` : `${hour}:00`  
+      return hour = hour < 10 ? `0${hour}` : `${hour}`
     },
     SELECTED_DATE: state => {
       let sDate = state.selectedDate;
