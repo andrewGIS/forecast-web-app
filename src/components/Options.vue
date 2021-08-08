@@ -94,7 +94,7 @@ export default {
       setSelectedEvent: "SET_SELECTED_EVENT"
     }),
     getGroups() {
-      fetch(`${process.env.VUE_APP_API_BASE}/event_groups`)
+      fetch(`${process.env.VUE_APP_API_BASE}/event_groups?model_name=${this.selectedModel}`)
         .then(data => data.json())
         .then(res => {
           
@@ -108,8 +108,8 @@ export default {
           //   }
           // ))
 
-          this.eventGroups = res;
-          this.setSelectedEvent(res[0]);
+          this.eventGroups = res.groups;
+          this.setSelectedEvent(res.groups[0]);
         })
         .catch(() => {
           this.eventGroups = [];
