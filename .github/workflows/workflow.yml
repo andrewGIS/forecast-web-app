@@ -14,3 +14,4 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
       env:
         VUE_APP_API_BASE: http://ogs.psu.ru:5001/api/v1
+        VUE_APP_PUBLIC_PATH: /forecast-web-app/
