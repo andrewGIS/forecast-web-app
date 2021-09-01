@@ -62,7 +62,7 @@ export default {
       };
     },
     geojsonURL (){
-      return `${process.env.VUE_APP_API_BASE}/get_forecast/?model=${this.selectedModel}&forecast_type=${this.selectedForescatType}&date=${this.SELECTED_DATE}&hour=${this.SELECTED_HOUR}&group=${this.SELECTED_EVENT_GROUP}`
+      return `${process.env.VUE_APP_API_BASE}/get_forecast?model=${this.selectedModel}&forecast_type=${this.selectedForescatType}&date=${this.SELECTED_DATE}&hour=${this.SELECTED_HOUR}&group=${this.SELECTED_EVENT_GROUP}&datatype=vector`
       //return `${process.env.VUE_APP_API_BASE}/get_forecast/?model=gfs&forecast_type=12&date=20210515&hour=15&group=squall_L2`
     }
   },
