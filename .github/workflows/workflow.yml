@@ -9,8 +9,8 @@ jobs:
     - id: Build-Vue
       uses: xRealNeon/VuePagesAction@1.0.0
       with:
-        username: 'jasonfritsche'
-        reponame: 'weather-vue'
+        username: 'andrewGIS'
+        reponame: 'forecast-web-app'
         token: ${{ secrets.GITHUB_TOKEN }}
       env:
         VUE_APP_API_BASE: http://ogs.psu.ru:5001/api/v1
