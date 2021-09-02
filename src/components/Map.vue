@@ -7,7 +7,7 @@
           <Options/>
           <date-picker/> -->
     <Alert />
-    <l-tiff/>
+    <l-tiff :url="rasterURL" :isVisible="true"></l-tiff>
   </l-map>
 </template>
 
@@ -18,6 +18,7 @@ import { LMap, LTileLayer } from "vue2-leaflet";
 import Alert from "./Alert.vue";
 import RiskLayer from "./RiskLayer";
 import LTiff from "./LTiff.vue"
+import { mapState, mapGetters } from "vuex";
 
 export default {
   name: "Map",
@@ -26,6 +27,29 @@ export default {
     osmURL: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     map: null
   }),
+  computed: {
+    ...mapState([
+      'selectedModel',
+      'selectedForescatType'
+      ]),
+    ...mapGetters([
+      'SELECTED_HOUR',
+      'SELECTED_DATE',
+      'SELECTED_EVENT_GROUP'
+    ]),
+    rasterURL (){
+      const baseURL = `${process.env.VUE_APP_API_BASE}/get_forecast?`;
+      const params = [
+        `model=${this.selectedModel}`,
+        `forecast_type=${this.selectedForescatType}`,
+        `date=${this.SELECTED_DATE}`,
+        `hour=${this.SELECTED_HOUR}`,
+        `group=${this.SELECTED_EVENT_GROUP}`,
+        'datatype=raster'
+      ]
+      return baseURL + params.join("&");
+    }
+  },
   components: {
     LMap,
     LTileLayer,
@@ -35,56 +59,6 @@ export default {
     Alert,
     RiskLayer,
     LTiff
-  },
-  methods:{
-    getImagePart() {
-      // Stream reading was stolen from official WEB api docs
-      return fetch(
-        `${process.env.VUE_APP_API_BASE}/get_index`
-      )
-        .then(response => response.body)
-        .then(rb => {
-          const reader = rb.getReader();
-
-          return new ReadableStream({
-            start(controller) {
-              // The following function handles each data chunk
-              function push() {
-                // "done" is a Boolean and value a "Uint8Array"
-                reader.read().then(({ done, value }) => {
-                  // If there is no more data to read
-                  if (done) {
-                    // console.log("done", done);
-                    controller.close();
-                    return;
-                  }
-                  // Get the data and send it to the browser via the controller
-                  controller.enqueue(value);
-                  // Check chunks by logging to the console
-                  //console.log(done, value);
-                  push();
-                });
-              }
-
-              push();
-            }
-          });
-        })
-        .then(stream => {
-          // Respond with our stream
-          return new Response(stream, {
-            headers: { "Content-Type": "image/tif" }
-          }).blob();
-        })
-        .then(result => {
-          // Do things with result
-          //console.log(result);
-          return URL.createObjectURL(result);
-        })
-        .catch(() => {
-          return;
-        });
-    },
   },
 };
 </script>

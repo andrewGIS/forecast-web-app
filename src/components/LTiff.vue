@@ -1,28 +1,18 @@
+// TODO Load how to add layer to leaflet map when url return not picture 
+// TODO Get boundary by request
 <script>
 import L from "leaflet";
 import * as GeoTIFF from "leaflet-geotiff-2";
 import "leaflet-geotiff-2/dist/leaflet-geotiff-plotty"; // requires plotty
 
 // from vue2leaflet src github for find leaflet map
-const findRealParent = firstVueParent => {
-  let found = false;
-  while (firstVueParent && !found) {
-    if (firstVueParent.mapObject === undefined) {
-      firstVueParent = firstVueParent.$parent;
-    } else {
-      found = true;
-    }
-  }
-  return firstVueParent;
-};
-
 const roptions = {
   // Optional. Minimum values to plot.
-  displayMin: 0,
+  displayMin: 1,
   // Optional. Maximum values to plot.
-  displayMax: 1024,
+  displayMax: 10,
   // Optional. If true values outside `displayMin` to `displayMax` will be rendered as if they were valid values.
-  clampLow: true,
+  clampLow: false,
   clampHigh: true,
   // Optional. Plotty color scale used to render the image.
   colorScale: "viridis"
@@ -87,20 +77,40 @@ const options = {
 };
 
 export default {
+  data:()=>({
+    layer: null
+  }),
+  props:{
+    url: {
+      type: String,
+      required: true
+    },
+    isVisible: {
+      type: Boolean,
+      required: true
+    }
+  },
   name: "LTiff",
   async mounted() {
-    let layer;
-    let blob = await this.getTiff();
-    layer = L.leafletGeotiff(blob, options);
-    this.mapObject = layer;
-    this.parentContainer = findRealParent(this.$parent);
-    layer.setOpacity(0.5);
-    layer.addTo(this.parentContainer.mapObject);
+    //let layer;
+    try{
+      //let blob = await this.getTiff();
+      let layer = L.leafletGeotiff([], options);
+      //let layer = L.leafletGeotiff()
+      this.mapObject = layer;
+      this.parentContainer = this.findRealParent(this.$parent);
+      layer.setOpacity(0.5);
+      layer.addTo(this.parentContainer.mapObject, !this.isVisible);
+      this.layer = layer;
+    } catch(error) {
+      console.log(error);
+    }
+
 
     // for show identification result in popu window
     //let popup;
     this.parentContainer.mapObject.on("click", e => {
-        console.log(layer.getValueAtLatLng(+e.latlng.lat, +e.latlng.lng));
+        console.log(this.layer.getValueAtLatLng(+e.latlng.lat, +e.latlng.lng));
 
         // sample for identification from GeoTiff
         // if (!popup) {
@@ -123,7 +133,7 @@ export default {
     // from other project and MSDN
     getTiff() {
       // Stream reading was stolen from official WEB api docs
-      return fetch(`${process.env.VUE_APP_API_BASE}/get_index`)
+      return fetch(this.url)
         .then(response => response.body)
         .then(rb => {
           const reader = rb.getReader();
@@ -166,6 +176,24 @@ export default {
         .catch(() => {
           return;
         });
+    },
+    findRealParent(firstVueParent) {
+      let found = false;
+      while (firstVueParent && !found) {
+        if (firstVueParent.mapObject === undefined) {
+          firstVueParent = firstVueParent.$parent;
+        } else {
+          found = true;
+        }
+      }
+      return firstVueParent;
+    }
+  },
+  watch:{
+    async url() {
+      if (this.layer) {
+        this.layer.setURL(this.url);
+      }
     }
   }
 };
