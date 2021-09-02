@@ -14,10 +14,20 @@ export default new Vuex.Store({
   },
   getters: {
     SELECTED_HOUR: state => {
+
+      if (!state.selectedDate) { 
+        return ""
+      }
+
       let hour = state.selectedDate.getUTCHours();
       return hour = hour < 10 ? `0${hour}` : `${hour}`
     },
     SELECTED_DATE: state => {
+
+      if (!state.selectedDate) { 
+        return ""
+      }
+
       let sDate = state.selectedDate;
 
       let month = sDate.getUTCMonth() + 1;
