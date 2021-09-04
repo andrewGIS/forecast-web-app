@@ -7,15 +7,19 @@
     app
     :value="isVisible"
   >
-     
     <v-container fluid>
       <v-row align="center">
-        <v-col cols="10" >
+        <v-col cols="10">
           Легенда
         </v-col>
         <v-col cols="1">
-          <v-btn icon @click="setLegendVisibility(false)">
-            <v-icon size="24px"> mdi-close </v-icon>
+          <v-btn
+            icon
+            @click="setLegendVisibility(false)"
+          >
+            <v-icon size="24px">
+              mdi-close
+            </v-icon>
           </v-btn>
         </v-col>  
       </v-row>
@@ -28,10 +32,10 @@
 // import { LControl } from 'vue2-leaflet'
 import { mapState, mapMutations } from 'vuex'
 export default {
+  name: "Legend",
   data: () => ({
     snackbar: true
   }),
-  name: "Legend",
   computed: {
     ...mapState({
       isVisible: "isLegendVisible"

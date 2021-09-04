@@ -1,44 +1,56 @@
 <template>
-  <v-snackbar left bottom :value="isVisible" timeout="-1" max-width="100">
+  <v-snackbar
+    left
+    bottom
+    :value="isVisible"
+    timeout="-1"
+    max-width="100"
+  >
     <v-container fluid>
       <v-row justify="end">
-        <v-btn class="mx-4" icon @click="setConfigVisibility(false)">
-          <v-icon size="24px"> mdi-close </v-icon>
+        <v-btn
+          class="mx-4"
+          icon
+          @click="setConfigVisibility(false)"
+        >
+          <v-icon size="24px">
+            mdi-close
+          </v-icon>
         </v-btn>
       </v-row>
       <v-row>
         <v-select
-          :items="forecastTypes"
           v-model="selectedforecastType"
+          :items="forecastTypes"
           filled
           label="Тип прогноза"
           dense
           solo
-        ></v-select>
+        />
       </v-row>
 
       <v-row>
         <v-select
-          :items="models"
           v-model="selectedModel"
+          :items="models"
           filled
           label="Модель"
           dense
           solo
-        ></v-select>
+        />
       </v-row>
 
       <v-row>
         <v-select
+          v-model="selectedEvent"
           label="Выберите группу"
           :items="eventGroups"
           item-text="alias"
-          v-model="selectedEvent"
           filled
           dense
           solo
           return-object
-        ></v-select>
+        />
       </v-row>
     </v-container>
   </v-snackbar>
@@ -48,15 +60,15 @@
 import { mapState, mapMutations } from "vuex";
 
 export default {
+  name: "Options",
+  components: {
+    // LControl
+  },
   data: () => ({
     forecastTypes: ["00", "12"],
     models: ["gfs", "icon"],
     eventGroups: []
   }),
-  name: "Options",
-  components: {
-    // LControl
-  },
   computed: {
     ...mapState({
       isVisible: "isConfigVisible"
@@ -86,6 +98,9 @@ export default {
       }
     }
   },
+  mounted() {
+    this.getGroups();
+  },
   methods: {
     ...mapMutations({
       setConfigVisibility: "SET_CONFIG_VISIBILITY",
@@ -94,6 +109,7 @@ export default {
       setSelectedEvent: "SET_SELECTED_EVENT"
     }),
     getGroups() {
+      // eslint-disable-next-line no-undef
       fetch(`${process.env.VUE_APP_API_BASE}/event_groups?model=${this.selectedModel}`)
         .then(data => data.json())
         .then(res => {
@@ -116,9 +132,6 @@ export default {
           this.setSelectedEvent(null);
         });
     }
-  },
-  mounted() {
-    this.getGroups();
   }
 };
 </script>

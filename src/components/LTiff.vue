@@ -1,6 +1,6 @@
-// TODO Load how to add layer to leaflet map when url return not picture 
-// TODO Get boundary by request
 <script>
+// TODO Load how to add layer to leaflet map when url return not picture
+// TODO Get boundary by request
 import L from "leaflet";
 import * as GeoTIFF from "leaflet-geotiff-2";
 import "leaflet-geotiff-2/dist/leaflet-geotiff-plotty"; // requires plotty
@@ -79,6 +79,17 @@ const options = {
 };
 
 export default {
+  name: "LTiff",
+  props: {
+    url: {
+      type: String,
+      required: true
+    },
+    isVisible: {
+      type: Boolean,
+      required: true
+    }
+  },
   data: () => ({
     layer: null,
     //TODO Request from server
@@ -93,17 +104,40 @@ export default {
       ]
     }
   }),
-  props: {
-    url: {
-      type: String,
-      required: true
+  computed: {
+    ...mapState(["selectedModel"]),
+    options() {
+      return {
+        renderer: renderer,
+        bounds: this.bbox,
+        band: 0,
+        image: 0,
+        clip: undefined,
+        pane: "overlayPane",
+        onError: null,
+        sourceFunction: GeoTIFF.fromBlob,
+        arrayBuffer: null,
+        noDataValue: undefined,
+        noDataKey: undefined,
+        opacity: 1
+      };
     },
-    isVisible: {
-      type: Boolean,
-      required: true
+    bbox() {
+      if (this.selectedModel) {
+        return this.modelsBounds[this.selectedModel];
+      }
+      return null;
     }
   },
-  name: "LTiff",
+  watch: {
+    url() {
+      if (this.layer) {
+        this.layer.setURL(this.url);
+        console.log(this.layer);
+        //console.log(this.layer.tiff.getMinMax());
+      }
+    }
+  },
   async mounted() {
     //let layer;
     try {
@@ -121,7 +155,7 @@ export default {
 
     // for show identification result in popu window
     //let popup;
-    this.parentContainer.mapObject.on("click", e => {
+    this.parentContainer.mapObject.on("mousemove", e => {
       console.log(this.layer.getValueAtLatLng(+e.latlng.lat, +e.latlng.lng));
 
       // sample for identification from GeoTiff
@@ -137,34 +171,6 @@ export default {
       //   .setContent(`Possible value at point (experimental/buggy): ${value}`)
       //   .openOn(this.parentContainer.mapObject);
     });
-  },
-  render() {
-    return null;
-  },
-  computed: {
-    ...mapState(["selectedModel"]),
-    options () {
-      return {
-        renderer: renderer,
-        bounds: this.bbox,
-        band: 0,
-        image: 0,
-        clip: undefined,
-        pane: "overlayPane",
-        onError: null,
-        sourceFunction: GeoTIFF.fromBlob,
-        arrayBuffer: null,
-        noDataValue: undefined,
-        noDataKey: undefined,
-        opacity: 1
-      }
-    },
-    bbox() {
-      if (this.selectedModel) {
-        return this.modelsBounds[this.selectedModel];
-      }
-      return null;
-    }
   },
   methods: {
     // from other project and MSDN
@@ -226,15 +232,8 @@ export default {
       return firstVueParent;
     }
   },
-  watch: {
-    async url() {
-      if (this.layer) {
-        this.layer.setURL(this.url);
-      }
-    }
+  render() {
+    return null;
   }
 };
 </script>
-
-<style>
-</style>

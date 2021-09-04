@@ -1,19 +1,38 @@
 <template>
   <v-container>
     <!-- Config button -->
-    <v-row align="center" justify="space-between">
-      <v-col cols="1" class="text-left">
-        <v-btn class="mx-4" icon @click="setConfigVisibility(true)">
-          <v-icon size="24px"> mdi-cog-outline </v-icon>
+    <v-row
+      align="center"
+      justify="space-between"
+    >
+      <v-col
+        cols="1"
+        class="text-left"
+      >
+        <v-btn
+          class="mx-4"
+          icon
+          @click="setConfigVisibility(true)"
+        >
+          <v-icon size="24px">
+            mdi-cog-outline
+          </v-icon>
         </v-btn>
       </v-col>
 
       <!-- Date and hour picker -->
       <!-- TODO Extract date picker to separate component-->
-      <v-col cols="9" сlass="text-center">
+      <v-col
+        cols="9"
+        сlass="text-center"
+      >
         Время прогноза
 
-        <v-slide-group show-arrows center-active v-model="selectedDate">
+        <v-slide-group
+          v-model="selectedDate"
+          show-arrows
+          center-active
+        >
           <v-slide-item
             v-for="(date, index) in generateForecastDates"
             :key="index"
@@ -28,9 +47,9 @@
               rounded
               @click="toggle"
             >
-              {{ date.localeDate.split(",")[0]}}
+              {{ date.localeDate.split(",")[0] }}
               <br>
-              {{ date.localeDate.split(",")[1]}}
+              {{ date.localeDate.split(",")[1] }}
               <!-- {{ hour2string(date.getHours(), true )}} -->
             </v-btn>
           </v-slide-item>
@@ -38,9 +57,18 @@
       </v-col>
 
       <!-- Legend picker -->
-      <v-col cols="1" class="text-right">
-        <v-btn class="mx-4" icon @click="setLegendVisibility(true)">
-          <v-icon size="24px"> mdi-cog-outline </v-icon>
+      <v-col
+        cols="1"
+        class="text-right"
+      >
+        <v-btn
+          class="mx-4"
+          icon
+          @click="setLegendVisibility(true)"
+        >
+          <v-icon size="24px">
+            mdi-cog-outline
+          </v-icon>
         </v-btn>
       </v-col>
     </v-row>

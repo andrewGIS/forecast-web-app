@@ -5,19 +5,17 @@
       color="primary"
       dark
     >
-    Прогноз опасных явлений 
-      <v-spacer></v-spacer>
-
+      Прогноз опасных явлений 
+      <v-spacer />
     </v-app-bar>
 
     <v-main>
-      <Map/>
-      <Options/>
-      <Legend/>
+      <Map />
+      <Options />
+      <Legend />
     </v-main>
 
-    <Footer/>
-
+    <Footer />
   </v-app>
 </template>
 

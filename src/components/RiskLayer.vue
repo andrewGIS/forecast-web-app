@@ -3,14 +3,14 @@
     :geojson="geoJSONData"
     :visible="!error_get_data && geoJSONVisibility"
     :options="optionsGeoJSON"
-  >
-  </l-geo-json>
+  />
 </template>
 
 <script>
 import { LGeoJson } from "vue2-leaflet";
 import { mapGetters, mapState } from "vuex";
 export default {
+  name: "RiskLayer",
   data: () => ({
     data: null,
     tooltipFields: [
@@ -21,7 +21,6 @@ export default {
     ],
     error_get_data: true
   }),
-  name: "RiskLayer",
   computed: {
     ...mapState(["selectedModel", "selectedForescatType"]),
     ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP"]),
@@ -80,23 +79,6 @@ export default {
       return baseURL + params.join("&");
     }
   },
-  methods: {
-    async getGeoJSONData(url) {
-      try {
-        let response = await fetch(url);
-        let result = await response.json();
-        if (!response.ok) {
-          return null;
-        }
-        this.error_get_data = false;
-        return result;
-      } catch (error) {
-        console.log(error);
-        this.error_get_data = true;
-        return null;
-      }
-    }
-  },
   // mounted (){
   //     this.getGeoJSONData()
   // },
@@ -114,6 +96,23 @@ export default {
       // }));
       //console.log(this.getGeoJSONData(this.geojsonURL));
       //this.data = this.getGeoJSONData(this.geojsonURL);
+    }
+  },
+  methods: {
+    async getGeoJSONData(url) {
+      try {
+        let response = await fetch(url);
+        let result = await response.json();
+        if (!response.ok) {
+          return null;
+        }
+        this.error_get_data = false;
+        return result;
+      } catch (error) {
+        console.log(error);
+        this.error_get_data = true;
+        return null;
+      }
     }
   },
   components: { LGeoJson }
