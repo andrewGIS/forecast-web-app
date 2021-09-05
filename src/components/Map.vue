@@ -45,7 +45,6 @@ export default {
     ...mapState(["selectedModel", "selectedForescatType"]),
     ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP"]),
     rasterURL() {
-      // eslint-disable-next-line no-undef
       const baseURL = `${process.env.VUE_APP_API_BASE}/get_forecast?`;
       const params = [
         `model=${this.selectedModel}`,
