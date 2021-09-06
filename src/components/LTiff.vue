@@ -23,60 +23,60 @@ const roptions = {
 const renderer = L.LeafletGeotiff.plotty(roptions);
 
 // eslint-disable-next-line no-unused-vars
-const options = {
-  // See renderer sections below.
-  // One of: L.LeafletGeotiff.rgb, L.LeafletGeotiff.plotty, L.LeafletGeotiff.vectorArrows
-  renderer: renderer,
+// const options = {
+//   // See renderer sections below.
+//   // One of: L.LeafletGeotiff.rgb, L.LeafletGeotiff.plotty, L.LeafletGeotiff.vectorArrows
+//   renderer: renderer,
 
-  // Optional array specifying the corners of the data, e.g. [[40.712216, -74.22655], [40.773941, -74.12544]].
-  // If omitted the image bounds will be read from the geoTIFF file (ModelTiepoint).
-  // bounds: [
-  //   //[34.875, 49.875],
-  //   //[75.125, 65.125]
-  //   [65.125, 75.125], // upper right corner lat lon
-  //   [49.875, 34.875] // bootom left corner lat lon
-  // ],
+//   // Optional array specifying the corners of the data, e.g. [[40.712216, -74.22655], [40.773941, -74.12544]].
+//   // If omitted the image bounds will be read from the geoTIFF file (ModelTiepoint).
+//   // bounds: [
+//   //   //[34.875, 49.875],
+//   //   //[75.125, 65.125]
+//   //   [65.125, 75.125], // upper right corner lat lon
+//   //   [49.875, 34.875] // bootom left corner lat lon
+//   // ],
 
-  // Optional geoTIFF band to read
-  band: 0,
+//   // Optional geoTIFF band to read
+//   band: 0,
 
-  // Optional geoTIFF image to read
-  image: 0,
+//   // Optional geoTIFF image to read
+//   image: 0,
 
-  // Optional clipping polygon, provided as an array of [lat,lon] coordinates.
-  // Note that this is the Leaflet [lat,lon] convention, not geoJSON [lon,lat].
-  clip: undefined,
+//   // Optional clipping polygon, provided as an array of [lat,lon] coordinates.
+//   // Note that this is the Leaflet [lat,lon] convention, not geoJSON [lon,lat].
+//   clip: undefined,
 
-  // Optional leaflet pane to add the layer.
-  pane: "overlayPane",
+//   // Optional leaflet pane to add the layer.
+//   pane: "overlayPane",
 
-  // Optional callback to handle failed URL request or parsing of tif
-  onError: null,
+//   // Optional callback to handle failed URL request or parsing of tif
+//   onError: null,
 
-  // Optional, override default GeoTIFF function used to load source data
-  // Oneof: fromUrl, fromBlob, fromArrayBuffer
-  // eslint-disable-next-line no-undef
-  sourceFunction: GeoTIFF.fromBlob,
+//   // Optional, override default GeoTIFF function used to load source data
+//   // Oneof: fromUrl, fromBlob, fromArrayBuffer
+//   // eslint-disable-next-line no-undef
+//   sourceFunction: GeoTIFF.fromBlob,
 
-  // Only required if sourceFunction is GeoTIFF.fromArrayBuffer
-  arrayBuffer: null,
+//   // Only required if sourceFunction is GeoTIFF.fromArrayBuffer
+//   arrayBuffer: null,
 
-  // Optional nodata value (integer)
-  // (to be ignored by getValueAtLatLng)
-  noDataValue: undefined,
+//   // Optional nodata value (integer)
+//   // (to be ignored by getValueAtLatLng)
+//   noDataValue: undefined,
 
-  // Optional key to extract nodata value from GeoTIFFImage
-  // nested keys can be provided in dot notation, e.g. foo.bar.baz
-  // (to be ignored by getValueAtLatLng)
-  // this overrides noDataValue, the nodata value should be an integer
-  noDataKey: undefined,
+//   // Optional key to extract nodata value from GeoTIFFImage
+//   // nested keys can be provided in dot notation, e.g. foo.bar.baz
+//   // (to be ignored by getValueAtLatLng)
+//   // this overrides noDataValue, the nodata value should be an integer
+//   noDataKey: undefined,
 
-  // The block size to use for buffer
-  //blockSize: 65536,
+//   // The block size to use for buffer
+//   //blockSize: 65536,
 
-  // Optional, override default opacity of 1 on the image added to the map
-  opacity: 1
-};
+//   // Optional, override default opacity of 1 on the image added to the map
+//   opacity: 1
+// };
 
 export default {
   name: "LTiff",
@@ -121,7 +121,7 @@ export default {
         clip: undefined,
         pane: "overlayPane",
         onError: () => {},
-        sourceFunction: GeoTIFF.fromBlob,
+        sourceFunction: GeoTIFF.fromUrl,
         arrayBuffer: null,
         noDataValue: undefined,
         noDataKey: undefined,
@@ -180,53 +180,6 @@ export default {
   },
   methods: {
     // from other project and MSDN
-    getTiff() {
-      // Stream reading was stolen from official WEB api docs
-      return fetch(this.url)
-        .then(response => response.body)
-        .then(rb => {
-          const reader = rb.getReader();
-
-          return new ReadableStream({
-            start(controller) {
-              // The following function handles each data chunk
-              function push() {
-                // "done" is a Boolean and value a "Uint8Array"
-                reader.read().then(({ done, value }) => {
-                  // If there is no more data to read
-                  if (done) {
-                    // console.log("done", done);
-                    controller.close();
-                    return;
-                  }
-                  // Get the data and send it to the browser via the controller
-                  controller.enqueue(value);
-                  // Check chunks by logging to the console
-                  //console.log(done, value);
-                  push();
-                });
-              }
-
-              push();
-            }
-          });
-        })
-        .then(stream => {
-          // Respond with our stream
-          return new Response(stream, {
-            headers: { "Content-Type": "image/tif" }
-          }).blob();
-        })
-        .then(result => {
-          // Do things with result
-          //console.log(result);
-          return URL.createObjectURL(result);
-        })
-        .catch(error => {
-          console.log(error);
-          return [];
-        });
-    },
     findRealParent(firstVueParent) {
       let found = false;
       while (firstVueParent && !found) {
@@ -239,9 +192,8 @@ export default {
       return firstVueParent;
     },
     async createTiffLayer() {
-      let blob = await this.getTiff();
-      let layer = L.leafletGeotiff(blob, this.options);
-      console.log(this.layer);
+      //let blob = await this.getTiff();
+      let layer = await L.leafletGeotiff(this.url, this.options);
       this.mapObject = layer;
       layer.setOpacity(0.5);
       layer.addTo(this.parentContainer.mapObject, !this.isVisible);
