@@ -6,17 +6,7 @@
           <v-icon size="24px"> mdi-close </v-icon>
         </v-btn>
       </v-row>
-      <v-row>
-        <v-select
-          :items="forecastTypes"
-          v-model="selectedforecastType"
-          filled
-          label="Тип прогноза"
-          dense
-          solo
-        ></v-select>
-      </v-row>
-
+      
       <v-row>
         <v-select
           :items="models"
@@ -40,6 +30,32 @@
           return-object
         ></v-select>
       </v-row>
+
+      <v-row>
+        <v-select
+          :items="forecastTypes"
+          v-model="selectedforecastType"
+          filled
+          label="Тип прогноза"
+          dense
+          solo
+        ></v-select>
+      </v-row>
+
+      <v-row>
+        <v-checkbox
+          @change="indexActive = !indexActive"
+          :checked="indexActive"
+        ></v-checkbox>
+        <v-select          
+          :items="indexList"
+          v-model="selectedIndex"
+          filled
+          dense
+          solo
+          :disabled="!indexActive"
+        ></v-select>
+      </v-row>
     </v-container>
   </v-snackbar>
 </template>
@@ -50,12 +66,14 @@ import { mapState, mapMutations } from "vuex";
 export default {
   data: () => ({
     forecastTypes: ["00", "12"],
-    models: ["gfs", "icon"],
-    eventGroups: []
+    models: [],
+    eventGroups: [],
+    indexList: [],
+    indexActive: false
   }),
   name: "Options",
   components: {
-    // LControl
+    
   },
   computed: {
     ...mapState({
@@ -84,30 +102,40 @@ export default {
       set(value) {
         this.setSelectedEvent(value);
       }
-    }
+    },
+    selectedIndex: {
+      get() {
+        return this.$store.state.selectedIndex;
+      },
+      set(value) {
+        this.setSelectedIndex(value);
+      }
+    },
   },
   methods: {
     ...mapMutations({
       setConfigVisibility: "SET_CONFIG_VISIBILITY",
       setForecastTypes: "SET_FORECAST_TYPE",
       setModel: "SET_MODEL",
-      setSelectedEvent: "SET_SELECTED_EVENT"
+      setSelectedEvent: "SET_SELECTED_EVENT",
+      setSelectedIndex: "SET_SELECTED_INDEX"
     }),
-    getGroups() {
-      fetch(`${process.env.VUE_APP_API_BASE}/event_groups?model_name=${this.selectedModel}`)
+    getModels() {
+      fetch(`${process.env.VUE_APP_API_BASE}/models`)
         .then(data => data.json())
         .then(res => {
-          
-          // for vuetify correct display transform input object
-          // let newArray = res.map((e =>{
-          //   let newObject = {};
-          //   newObject.alias = e.alias;
-          //   newObject.value = e;
-
-          //   return newObject
-          //   }
-          // ))
-
+          this.models = res.models;
+          this.setModel(res.models[0]);
+        })
+        .catch(() => {
+          this.models = [];
+          this.setModel(null);
+        });
+    },
+    getGroups() {
+      fetch(`${process.env.VUE_APP_API_BASE}/event_groups?model=${this.selectedModel}`)
+        .then(data => data.json())
+        .then(res => {
           this.eventGroups = res.groups;
           this.setSelectedEvent(res.groups[0]);
         })
@@ -115,10 +143,31 @@ export default {
           this.eventGroups = [];
           this.setSelectedEvent(null);
         });
+    },
+    getIndexes() {
+      fetch(`${process.env.VUE_APP_API_BASE}/indexes?model=${this.selectedModel}`)
+        .then(data => data.json())
+        .then(res => {
+          this.indexList = res.indexes;
+          this.setSelectedIndex(res.indexes[0]);
+        })
+        .catch(() => {
+          this.indexList = [];
+          this.setSelectedIndex(null);
+        });
+    }
+
+  },
+  watch: {
+    selectedModel: function () {
+      this.getGroups();
+      this.getIndexes();
     }
   },
   mounted() {
     this.getGroups();
+    this.getModels();
+    this.getIndexes();
   }
 };
 </script>
