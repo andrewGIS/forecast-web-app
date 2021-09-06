@@ -88,21 +88,27 @@ export default {
     isVisible: {
       type: Boolean,
       required: true
+    },
+    infoPopup: {
+      type: Boolean,
+      required: true
     }
   },
   data: () => ({
     layer: null,
     //TODO Request from server
+    // upper rught bootom left corner lat lon
     modelsBounds: {
       gfs: [
         [65.125, 75.125],
         [49.875, 34.875]
-      ], // upper rught bootom left corner lat lon
+      ], 
       icon: [
         [65.0625, 74.9375],
         [50.0625, 34.9375]
       ]
-    }
+    },
+    map: null
   }),
   computed: {
     ...mapState(["selectedModel"]),
@@ -114,7 +120,7 @@ export default {
         image: 0,
         clip: undefined,
         pane: "overlayPane",
-        onError: null,
+        onError: () => {},
         sourceFunction: GeoTIFF.fromBlob,
         arrayBuffer: null,
         noDataValue: undefined,
@@ -133,43 +139,43 @@ export default {
     url() {
       if (this.layer) {
         this.layer.setURL(this.url);
-        console.log(this.layer);
-        //console.log(this.layer.tiff.getMinMax());
       }
+    },
+    selectedModel() {
+      this.map.removeLayer(this.layer);
+      this.createTiffLayer();
     }
   },
-  async mounted() {
-    //let layer;
+  mounted() {
     try {
-      //let blob = await this.getTiff();
-      let layer = L.leafletGeotiff([], this.options);
-      //let layer = L.leafletGeotiff()
-      this.mapObject = layer;
+      this.createTiffLayer();
       this.parentContainer = this.findRealParent(this.$parent);
-      layer.setOpacity(0.5);
-      layer.addTo(this.parentContainer.mapObject, !this.isVisible);
-      this.layer = layer;
+      this.map = this.parentContainer.mapObject;
     } catch (error) {
       console.log(error);
     }
 
     // for show identification result in popu window
-    //let popup;
+    // TODO check when props change
+    let popup;
+    if (!this.infoPopup) {
+      return
+    }
     this.parentContainer.mapObject.on("mousemove", e => {
-      console.log(this.layer.getValueAtLatLng(+e.latlng.lat, +e.latlng.lng));
+      //console.log(this.layer.getValueAtLatLng(+e.latlng.lat, +e.latlng.lng));
 
-      // sample for identification from GeoTiff
-      // if (!popup) {
-      //   popup = L.popup()
-      //     .setLatLng([e.latlng.lat, e.latlng.lng])
-      //     .openOn(this.map);
-      // } else {
-      //   popup.setLatLng([e.latlng.lat, e.latlng.lng]);
-      // }
-      // const value = layer.getValueAtLatLng(+e.latlng.lat, +e.latlng.lng);
-      // popup
-      //   .setContent(`Possible value at point (experimental/buggy): ${value}`)
-      //   .openOn(this.parentContainer.mapObject);
+      //sample for identification from GeoTiff
+      if (!popup) {
+        popup = L.popup()
+          .setLatLng([e.latlng.lat, e.latlng.lng])
+          .openOn(this.map);
+      } else {
+        popup.setLatLng([e.latlng.lat, e.latlng.lng]);
+      }
+      const value = this.layer.getValueAtLatLng(+e.latlng.lat, +e.latlng.lng);
+      popup
+        .setContent(`Значение растра в точке: ${value}`)
+        .openOn(this.parentContainer.mapObject);
     });
   },
   methods: {
@@ -216,8 +222,9 @@ export default {
           //console.log(result);
           return URL.createObjectURL(result);
         })
-        .catch(() => {
-          return;
+        .catch(error => {
+          console.log(error);
+          return [];
         });
     },
     findRealParent(firstVueParent) {
@@ -230,6 +237,15 @@ export default {
         }
       }
       return firstVueParent;
+    },
+    async createTiffLayer() {
+      let blob = await this.getTiff();
+      let layer = L.leafletGeotiff(blob, this.options);
+      console.log(this.layer);
+      this.mapObject = layer;
+      layer.setOpacity(0.5);
+      layer.addTo(this.parentContainer.mapObject, !this.isVisible);
+      this.layer = layer;
     }
   },
   render() {
