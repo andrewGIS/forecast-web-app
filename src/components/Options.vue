@@ -22,7 +22,7 @@
           ></v-select>
         </v-col>
         <v-col cols="2" class="pa-0">
-          <v-btn class="mx-4" icon>
+          <v-btn class="mx-4" icon @click="dialog = true">
           <v-icon size="24px"> mdi-information </v-icon>
         </v-btn>
         </v-col>
@@ -45,7 +45,7 @@
           ></v-select>
         </v-col>
         <v-col cols="2" class="pa-0">
-          <v-btn class="mx-4" icon>
+          <v-btn class="mx-4" icon @click="dialog = true">
           <v-icon size="24px"> mdi-information </v-icon>
         </v-btn>
         </v-col>
@@ -66,7 +66,7 @@
           ></v-select>
         </v-col>
         <v-col cols="2" class="pa-0">
-          <v-btn class="mx-4" icon>
+          <v-btn class="mx-4" icon @click="dialog = true">
           <v-icon size="24px"> mdi-information </v-icon>
         </v-btn>
         </v-col>
@@ -98,11 +98,36 @@
           ></v-select>
         </v-col>
         <v-col cols="2" class="pa-0">
-          <v-btn class="mx-4" icon>
+          <v-btn class="mx-4" icon @click="dialog = true">
           <v-icon size="24px"> mdi-information </v-icon>
         </v-btn>
         </v-col>
       </v-row>
+
+      <v-dialog
+        v-model="dialog"
+        width="500"
+      >
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Дополнительная информация
+        </v-card-title>
+        <v-card-text>
+          Описание разделов меню
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="dialog = false"
+          >
+            Закрыть
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </v-container>
   </v-snackbar>
 </template>
@@ -117,6 +142,7 @@ export default {
     eventGroups: [],
     indexList: [],
     indexActive: false,
+    dialog: false
   }),
   name: "Options",
   components: {},
