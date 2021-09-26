@@ -22,7 +22,7 @@
           ></v-select>
         </v-col>
         <v-col cols="2" class="pa-0">
-          <v-btn class="mx-4" icon @click="dialog = true">
+          <v-btn class="mx-4" icon @click="dialog = true, menusection='model'">
           <v-icon size="24px"> mdi-information </v-icon>
         </v-btn>
         </v-col>
@@ -45,7 +45,7 @@
           ></v-select>
         </v-col>
         <v-col cols="2" class="pa-0">
-          <v-btn class="mx-4" icon @click="dialog = true">
+          <v-btn class="mx-4" icon @click="dialog = true, menusection='eventgroup'">
           <v-icon size="24px"> mdi-information </v-icon>
         </v-btn>
         </v-col>
@@ -66,7 +66,7 @@
           ></v-select>
         </v-col>
         <v-col cols="2" class="pa-0">
-          <v-btn class="mx-4" icon @click="dialog = true">
+          <v-btn class="mx-4" icon @click="dialog = true, menusection='forecasttime'">
           <v-icon size="24px"> mdi-information </v-icon>
         </v-btn>
         </v-col>
@@ -98,7 +98,7 @@
           ></v-select>
         </v-col>
         <v-col cols="2" class="pa-0">
-          <v-btn class="mx-4" icon @click="dialog = true">
+          <v-btn class="mx-4" icon @click="dialog = true, menusection='index'">
           <v-icon size="24px"> mdi-information </v-icon>
         </v-btn>
         </v-col>
@@ -113,7 +113,7 @@
           Дополнительная информация
         </v-card-title>
         <v-card-text>
-          Описание разделов меню
+          {{modalinfo[menusection]}}
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
@@ -142,7 +142,14 @@ export default {
     eventGroups: [],
     indexList: [],
     indexActive: false,
-    dialog: false
+    dialog: false,
+    modalinfo: {
+      model: 'Модель',
+      eventgroup: 'Группа явлений',
+      forecasttime: 'Время прогноза',
+      index: 'Диагностические переменные'
+    },
+    menusection: "model"
   }),
   name: "Options",
   components: {},
