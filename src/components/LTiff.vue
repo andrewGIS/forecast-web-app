@@ -11,7 +11,7 @@ const roptions = {
   // Optional. Minimum values to plot.
   displayMin: 1,
   // Optional. Maximum values to plot.
-  displayMax: 10,
+  displayMax: 1000,
   // Optional. If true values outside `displayMin` to `displayMax` will be rendered as if they were valid values.
   clampLow: false,
   clampHigh: true,
@@ -20,7 +20,9 @@ const roptions = {
   //colorScale: "greys"
 };
 
+// eslint-disable-next-line no-unused-vars
 const renderer = L.LeafletGeotiff.plotty(roptions);
+//const options = L.LeafletGeotiff.plotty()
 
 // eslint-disable-next-line no-unused-vars
 // const options = {
@@ -95,6 +97,35 @@ export default {
     }
   },
   data: () => ({
+    // roptions: {
+    //   // Optional. Minimum values to plot.
+    //   displayMin: 1,
+    //   // Optional. Maximum values to plot.
+    //   displayMax: 1000,
+    //   // Optional. If true values outside `displayMin` to `displayMax` will be rendered as if they were valid values.
+    //   clampLow: false,
+    //   clampHigh: true,
+    //   // Optional. Plotty color scale used to render the image.
+    //   colorScale: "viridis"
+    //   //colorScale: "greys"
+    // },
+    // renderer: L.LeafletGeotiff.plotty({
+    //   // Optional. Minimum values to plot.
+    //   displayMin: 1,
+    //   // Optional. Maximum values to plot.
+    //   displayMax: 10,
+    //   // Optional. If true values outside `displayMin` to `displayMax` will be rendered as if they were valid values.
+    //   clampLow: false,
+    //   clampHigh: true,
+    //   // Optional. Plotty color scale used to render the image.
+    //   colorScale: "viridis"
+    //   //colorScale: "greys"
+    // }),
+    renderer: L.LeafletGeotiff.plotty({
+      clampLow: false,
+      clampHigh: true,
+      colorScale: "viridis"
+    }),
     layer: null,
     //TODO Request from server
     // upper rught bootom left corner lat lon
@@ -102,7 +133,7 @@ export default {
       gfs: [
         [65.125, 75.125],
         [49.875, 34.875]
-      ], 
+      ],
       icon: [
         [65.0625, 74.9375],
         [50.0625, 34.9375]
@@ -112,9 +143,13 @@ export default {
   }),
   computed: {
     ...mapState(["selectedModel"]),
+    // renderer(){
+    //   //let options = L.leafletGeotiff.plotty()
+    //   return options
+    // },
     options() {
       return {
-        renderer: renderer,
+        renderer: this.renderer,
         bounds: this.bbox,
         band: 0,
         image: 0,
@@ -123,9 +158,10 @@ export default {
         onError: () => {},
         sourceFunction: GeoTIFF.fromUrl,
         arrayBuffer: null,
-        noDataValue: undefined,
+        noDataValue: 0,
         noDataKey: undefined,
         opacity: 1
+        // The block size to use for buffer
       };
     },
     bbox() {
@@ -138,7 +174,19 @@ export default {
   watch: {
     url() {
       if (this.layer) {
+        //this.map.removeLayer(this.layer)
+        //this.renderer.options.displayMax = 10;
+        //this.renderer.options.displayMin = 0;
+        //this.renderer.setDisplayRange({min: 0, max: 10})
+        //this.createTiffLayer();
         this.layer.setURL(this.url);
+        console.log(this.layer);
+        console.log(Math.max(...this.layer.raster.data[0]), Math.min(...this.layer.raster.data[0]))
+        this.layer.options.renderer.options.displayMax = Number.parseInt(Math.max(...this.layer.raster.data[0]));
+        this.layer.options.renderer.options.displayMin = Number.parseInt(Math.min(...this.layer.raster.data[0]));
+        //this.map.addLayer(this.layer);
+        console.log(this.layer);
+        
       }
     },
     selectedModel() {
@@ -159,7 +207,7 @@ export default {
     // TODO check when props change
     let popup;
     if (!this.infoPopup) {
-      return
+      return;
     }
     this.parentContainer.mapObject.on("mousemove", e => {
       //console.log(this.layer.getValueAtLatLng(+e.latlng.lat, +e.latlng.lng));
@@ -192,8 +240,9 @@ export default {
       return firstVueParent;
     },
     async createTiffLayer() {
-      //let blob = await this.getTiff();
       let layer = await L.leafletGeotiff(this.url, this.options);
+      //this.layer._zoomAnimated = false;
+      //delete this.layer.__animateZoom;
       this.mapObject = layer;
       layer.setOpacity(0.5);
       layer.addTo(this.parentContainer.mapObject, !this.isVisible);

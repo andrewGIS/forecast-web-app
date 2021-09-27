@@ -1,15 +1,26 @@
 <template>
-  <l-map ref="map">
-    <!-- <risk-layer /> -->
+  <!-- FIXME temp solution minZoom for correct display ltiff-->
+  <l-map
+    ref="map"
+    :min-zoom="3"
+  >
+    <risk-layer />
     <l-tile-layer :url="osmURL" />
 
     <!-- <Legend/>
           <Options/>
           <date-picker/> -->
     <Alert />
-    <l-tiff
+
+    <!-- <l-tiff
       :url="rasterURL"
       :is-visible="true"
+      :info-popup="false"
+    /> -->
+    <l-tiff
+      :url="indexURL"
+      :is-visible="true"
+      :info-popup="true"
     />
   </l-map>
 </template>
@@ -55,6 +66,21 @@ export default {
         "datatype=raster"
       ];
       return baseURL + params.join("&");
+    },
+    indexURL () {
+      //`http://localhost:5000/api/v1/get_index?model=icon&date=20210721&forecast_type=00&hour=03&index_name=dls`
+      const baseURL = `${process.env.VUE_APP_API_BASE}/get_index?`;
+
+      const params = [
+        `model=${this.selectedModel}`,
+        `forecast_type=${this.selectedForescatType}`,
+        `date=${this.SELECTED_DATE}`,
+        `hour=${this.SELECTED_HOUR}`,
+        "index_name=dls"
+      ];
+
+      return baseURL + params.join("&");
+
     }
   }
 };
