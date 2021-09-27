@@ -121,6 +121,9 @@ export default {
       return outDates;
     }
   },
+  mounted() {
+    this.selectedDate = this.generateForecastDates[0].utcDate;
+  },
   methods: {
     ...mapMutations({ 
       setConfigVisibility: "SET_CONFIG_VISIBILITY",
@@ -153,9 +156,6 @@ export default {
       );
       return new Date(utc);
     }
-  },
-  mounted() {
-    this.selectedDate = this.generateForecastDates[0].utcDate;
   }
 };
 </script>
