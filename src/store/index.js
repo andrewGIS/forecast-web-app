@@ -11,6 +11,7 @@ export default new Vuex.Store({
     selectedModel: "gfs",
     selectedForescatType: "00",
     selectedEvent: null,
+    selectedIndex: null
   },
   getters: {
     SELECTED_HOUR: state => {
@@ -45,6 +46,9 @@ export default new Vuex.Store({
     },
     SET_SELECTED_EVENT(state, payload) {
       state.selectedEvent = payload;
+    },
+    SET_SELECTED_INDEX(state, payload) {
+      state.selectedIndex = payload;
     },
     SET_SELECTED_DATE(state, payload) {
       state.selectedDate = payload;
