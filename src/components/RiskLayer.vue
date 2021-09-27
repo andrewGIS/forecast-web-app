@@ -11,6 +11,7 @@ import { LGeoJson } from "vue2-leaflet";
 import { mapGetters, mapState } from "vuex";
 export default {
   name: "RiskLayer",
+  components: { LGeoJson },
   data: () => ({
     data: null,
     tooltipFields: [
@@ -38,8 +39,7 @@ export default {
     optionsGeoJSON() {
       return {
         onEachFeature: this.onEachFeature,
-        //pointToLayer: this.pointToLayer
-        style: this.style
+        //style: this.style
       };
     },
     style() {
@@ -114,8 +114,7 @@ export default {
         return null;
       }
     }
-  },
-  components: { LGeoJson }
+  }
 };
 </script>
 
