@@ -160,7 +160,8 @@ export default {
         arrayBuffer: null,
         noDataValue: 0,
         noDataKey: undefined,
-        opacity: 1
+        opacity: 1,
+        popup: null
         // The block size to use for buffer
       };
     },
@@ -203,27 +204,27 @@ export default {
       console.log(error);
     }
 
+    this.popup = L.popup();
+
     // for show identification result in popu window
     // TODO check when props change
-    let popup;
-    if (!this.infoPopup) {
-      return;
-    }
     this.parentContainer.mapObject.on("mousemove", e => {
-      //console.log(this.layer.getValueAtLatLng(+e.latlng.lat, +e.latlng.lng));
 
       //sample for identification from GeoTiff
-      if (!popup) {
-        popup = L.popup()
-          .setLatLng([e.latlng.lat, e.latlng.lng])
-          .openOn(this.map);
-      } else {
-        popup.setLatLng([e.latlng.lat, e.latlng.lng]);
-      }
       const value = this.layer.getValueAtLatLng(+e.latlng.lat, +e.latlng.lng);
-      popup
+      if (value === null || value === undefined) {
+        //this.popup.closePopup();
+        this.popup.remove();
+        return
+      }
+
+      this.popup
+        .setLatLng([e.latlng.lat, e.latlng.lng])
+        .openOn(this.map);
+      
+      this.popup
         .setContent(`Значение растра в точке: ${value}`)
-        .openOn(this.parentContainer.mapObject);
+        //.openOn(this.parentContainer.mapObject);
     });
   },
   methods: {
