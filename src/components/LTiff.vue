@@ -193,6 +193,17 @@ export default {
     selectedModel() {
       this.map.removeLayer(this.layer);
       this.createTiffLayer();
+    },
+    isVisible(){
+      if(!this.isVisible) {
+        this.map.removeLayer(this.layer);
+        this.popup.remove();
+        this.map.off('mousemove', this.dispalyPopup);
+      } else {
+        this.createTiffLayer();
+        this.map.on("mousemove", this.dispalyPopup);
+      }
+    },
     }
   },
   mounted() {
@@ -208,8 +219,14 @@ export default {
 
     // for show identification result in popu window
     // TODO check when props change
-    this.parentContainer.mapObject.on("mousemove", e => {
+    this.map.on("mousemove", this.dispalyPopup);
+  },
+  methods: {
+    dispalyPopup(e) {
 
+      if(!this.isVisible) {
+        return 
+      }
       //sample for identification from GeoTiff
       const value = this.layer.getValueAtLatLng(+e.latlng.lat, +e.latlng.lng);
       if (value === null || value === undefined) {
@@ -225,9 +242,7 @@ export default {
       this.popup
         .setContent(`Значение растра в точке: ${value}`)
         //.openOn(this.parentContainer.mapObject);
-    });
-  },
-  methods: {
+    },
     // from other project and MSDN
     findRealParent(firstVueParent) {
       let found = false;
@@ -246,8 +261,11 @@ export default {
       //delete this.layer.__animateZoom;
       this.mapObject = layer;
       layer.setOpacity(0.5);
-      layer.addTo(this.parentContainer.mapObject, !this.isVisible);
       this.layer = layer;
+      if(this.isVisible){
+        this.layer.addTo(this.map, this.isVisible);
+      }
+      
     }
   },
   render() {
