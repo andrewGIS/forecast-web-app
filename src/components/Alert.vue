@@ -6,9 +6,8 @@
     top
     right
     max-width="30"
-    
   >
-      <!-- <b-row>
+    <!-- <b-row>
             <div class='legend-title'>Легенда
             </div>
         </b-row>
@@ -32,7 +31,7 @@
                 </div>
             </b-col>
         </b-row> -->
-      В ближайшие часы рядом с вами опасных явлений не ожидается
+    В ближайшие часы рядом с вами опасных явлений не ожидается
   </v-snackbar>
   <!-- </l-control> -->
 </template>
@@ -40,10 +39,13 @@
 <script>
 // import { LControl } from 'vue2-leaflet'
 export default {
+  name: "Legend",
+  components: {
+    // LControl
+  },
   data: () => ({
     snackbar: true
   }),
-  name: "Legend",
   computed: {
     legendData() {
       return {};
@@ -83,9 +85,6 @@ export default {
     visible() {
       return true;
     }
-  },
-  components: {
-    // LControl
   }
 };
 </script>

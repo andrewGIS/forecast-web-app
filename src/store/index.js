@@ -11,14 +11,25 @@ export default new Vuex.Store({
     selectedModel: "gfs",
     selectedForescatType: "00",
     selectedEvent: null,
-    selectedIndex: null
+    selectedIndex: null,
+    indexActive: false
   },
   getters: {
     SELECTED_HOUR: state => {
+
+      if (!state.selectedDate) { 
+        return ""
+      }
+
       let hour = state.selectedDate.getUTCHours();
       return hour = hour < 10 ? `0${hour}` : `${hour}`
     },
     SELECTED_DATE: state => {
+
+      if (!state.selectedDate) { 
+        return ""
+      }
+
       let sDate = state.selectedDate;
 
       let month = sDate.getUTCMonth() + 1;
@@ -52,6 +63,9 @@ export default new Vuex.Store({
     },
     SET_SELECTED_DATE(state, payload) {
       state.selectedDate = payload;
+    },
+    SET_INDEX_VISIBILITY(state, payload) {
+      state.indexActive = payload;
     },
   },
   actions: {},
