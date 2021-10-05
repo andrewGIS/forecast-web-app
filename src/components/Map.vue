@@ -19,7 +19,7 @@
     /> -->
     <l-tiff
       :url="indexURL"
-      :is-visible="true"
+      :is-visible="indexActive"
       :info-popup="true"
     />
   </l-map>
@@ -53,7 +53,7 @@ export default {
     map: null
   }),
   computed: {
-    ...mapState(["selectedModel", "selectedForescatType"]),
+    ...mapState(["selectedModel", "selectedForescatType","selectedIndex","indexActive"]),
     ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP"]),
     rasterURL() {
       const baseURL = `${process.env.VUE_APP_API_BASE}/get_forecast?`;
@@ -76,7 +76,7 @@ export default {
         `forecast_type=${this.selectedForescatType}`,
         `date=${this.SELECTED_DATE}`,
         `hour=${this.SELECTED_HOUR}`,
-        "index_name=dls"
+        `index_name=${this.selectedIndex}`
       ];
 
       return baseURL + params.join("&");

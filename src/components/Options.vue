@@ -143,7 +143,7 @@
         >
           <v-checkbox
             :checked="indexActive"
-            @change="indexActive = !indexActive"
+            @change="setIndexActive(!indexActive)"
           />
         </v-col>
         <v-col
@@ -216,7 +216,6 @@ export default {
     models: [],
     eventGroups: [],
     indexList: [],
-    indexActive: false,
     dialog: false,
     modalinfo: {
       model: 'Модель',
@@ -262,6 +261,14 @@ export default {
         this.setSelectedIndex(value);
       },
     },
+    indexActive:{
+      get() {
+        return this.$store.state.indexActive;
+      },
+      set(value) {
+        this.setIndexActive(value);
+      },
+    }
   },
   watch: {
     selectedModel: function () {
@@ -281,6 +288,7 @@ export default {
       setModel: "SET_MODEL",
       setSelectedEvent: "SET_SELECTED_EVENT",
       setSelectedIndex: "SET_SELECTED_INDEX",
+      setIndexActive: "SET_INDEX_VISIBILITY"
     }),
     getModels() {
       fetch(`${process.env.VUE_APP_API_BASE}/models`)
