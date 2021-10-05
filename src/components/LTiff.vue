@@ -204,6 +204,15 @@ export default {
         this.map.on("mousemove", this.dispalyPopup);
       }
     },
+    // TODO протестить 
+    infoPopup(){
+      if(!this.infoPopup) {
+        this.popup.remove();
+        this.map.off('mousemove', this.dispalyPopup);
+      } else {
+        this.popup = L.popup();
+        this.map.on("mousemove", this.dispalyPopup);
+      }
     }
   },
   mounted() {
