@@ -33,6 +33,7 @@ import Alert from "./Alert.vue";
 import RiskLayer from "./RiskLayer";
 import LTiff from "./LTiff.vue";
 import { mapState, mapGetters } from "vuex";
+import {latLng} from "leaflet";
 
 export default {
   name: "Map",
@@ -82,6 +83,15 @@ export default {
       return baseURL + params.join("&");
 
     }
+  },
+  mounted(){
+    navigator.geolocation.getCurrentPosition(this.geoSuccess, ()=>{})
+  },
+  methods:{
+    geoSuccess(e) {
+      this.$refs.map.mapObject.setView(latLng(e.coords.latitude, e.coords.longitude), 5)
+    }
   }
 };
+
 </script>
