@@ -12,7 +12,8 @@ export default new Vuex.Store({
     selectedForescatType: "00",
     selectedEvent: null,
     selectedIndex: null,
-    indexActive: false
+    indexActive: false,
+    selectedDisplayType: "vector"
   },
   getters: {
     SELECTED_HOUR: state => {
@@ -66,6 +67,9 @@ export default new Vuex.Store({
     },
     SET_INDEX_VISIBILITY(state, payload) {
       state.indexActive = payload;
+    },
+    SET_SELECTED_DISPLAY_TYPE(state, payload) {
+      state.selectedDisplayType = payload;
     },
   },
   actions: {},

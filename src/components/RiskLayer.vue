@@ -1,7 +1,7 @@
 <template>
   <l-geo-json
     :geojson="geoJSONData"
-    :visible="!error_get_data && geoJSONVisibility"
+    :visible="!error_get_data && isVisible"
     :options="optionsGeoJSON"
   />
 </template>
@@ -12,6 +12,12 @@ import { mapGetters, mapState } from "vuex";
 export default {
   name: "RiskLayer",
   components: { LGeoJson },
+  props:{
+    isVisible: {
+      type:Boolean,
+      required: true
+    }
+  },
   data: () => ({
     data: null,
     tooltipFields: [
@@ -26,7 +32,7 @@ export default {
     ...mapState(["selectedModel", "selectedForescatType"]),
     ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP"]),
     geoJSONData() {
-      if (this.geoJSONVisibility && this.data && !this.error_get_data) {
+      if (this.isVisible && this.data && !this.error_get_data) {
         // return this.$store.getters.GET_FILTERED_GEOJSON;
         return this.data;
       } else {

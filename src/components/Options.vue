@@ -19,7 +19,7 @@
         </v-btn>
       </v-row>
 
-      <v-row class="pa-0"> 
+      <v-row class="pa-0">
         <v-col class="pa-0">
           Модель
         </v-col>
@@ -45,7 +45,7 @@
           <v-btn
             class="mx-4"
             icon
-            @click="dialog = true, menusection='model'"
+            @click="(dialog = true), (menusection = 'model')"
           >
             <v-icon size="24px">
               mdi-information
@@ -54,11 +54,12 @@
         </v-col>
       </v-row>
 
-      <v-row class="pa-0"> 
+      <v-row class="pa-0">
         <v-col class="pa-0">
           Группа явлений
         </v-col>
       </v-row>
+
       <v-row class="pa-0">
         <v-col
           cols="10"
@@ -82,7 +83,7 @@
           <v-btn
             class="mx-4"
             icon
-            @click="dialog = true, menusection='eventgroup'"
+            @click="(dialog = true), (menusection = 'eventgroup')"
           >
             <v-icon size="24px">
               mdi-information
@@ -91,7 +92,34 @@
         </v-col>
       </v-row>
 
-      <v-row class="pa-0"> 
+      <v-row
+        class="pa-0"         
+        align-content="center"
+        justify="space-between"
+        align="baseline"
+      >
+        <v-row class="pa-0">
+          <v-col cols="12">
+            <v-radio-group
+              v-model="selectedDisplayType"
+            >
+              <template #label>
+                <div>Способ отображения прогноза</div>
+              </template>
+              <v-radio
+                label="Растр"
+                value="raster"
+              />
+              <v-radio
+                label="Вектор"
+                value="vector"
+              />
+            </v-radio-group>
+          </v-col>
+        </v-row>
+      </v-row>
+
+      <v-row class="pa-0">
         <v-col class="pa-0">
           Время прогноза
         </v-col>
@@ -117,7 +145,7 @@
           <v-btn
             class="mx-4"
             icon
-            @click="dialog = true, menusection='forecasttime'"
+            @click="(dialog = true), (menusection = 'forecasttime')"
           >
             <v-icon size="24px">
               mdi-information
@@ -125,8 +153,8 @@
           </v-btn>
         </v-col>
       </v-row>
-      
-      <v-row class="pa-0"> 
+
+      <v-row class="pa-0">
         <v-col class="pa-0">
           Индекс
         </v-col>
@@ -166,7 +194,7 @@
           <v-btn
             class="mx-4"
             icon
-            @click="dialog = true, menusection='index'"
+            @click="(dialog = true), (menusection = 'index')"
           >
             <v-icon size="24px">
               mdi-information
@@ -218,16 +246,16 @@ export default {
     indexList: [],
     dialog: false,
     modalinfo: {
-      model: 'Модель',
-      eventgroup: 'Группа явлений',
-      forecasttime: 'Время прогноза',
-      index: 'Диагностические переменные'
+      model: "Модель",
+      eventgroup: "Группа явлений",
+      forecasttime: "Время прогноза",
+      index: "Диагностические переменные"
     },
     menusection: "model"
   }),
   computed: {
     ...mapState({
-      isVisible: "isConfigVisible",
+      isVisible: "isConfigVisible"
     }),
     selectedforecastType: {
       get() {
@@ -235,7 +263,7 @@ export default {
       },
       set(value) {
         this.setForecastTypes(value);
-      },
+      }
     },
     selectedModel: {
       get() {
@@ -243,7 +271,7 @@ export default {
       },
       set(value) {
         this.setModel(value);
-      },
+      }
     },
     selectedEvent: {
       get() {
@@ -251,7 +279,7 @@ export default {
       },
       set(value) {
         this.setSelectedEvent(value);
-      },
+      }
     },
     selectedIndex: {
       get() {
@@ -259,22 +287,30 @@ export default {
       },
       set(value) {
         this.setSelectedIndex(value);
-      },
+      }
     },
-    indexActive:{
+    indexActive: {
       get() {
         return this.$store.state.indexActive;
       },
       set(value) {
         this.setIndexActive(value);
+      }
+    },
+    selectedDisplayType: {
+      get(){
+        return this.$store.state.selectedDisplayType;
       },
+      set(value) {
+        this.setDisplayType(value);
+      }
     }
   },
   watch: {
-    selectedModel: function () {
+    selectedModel: function() {
       this.getGroups();
       this.getIndexes();
-    },
+    }
   },
   mounted() {
     this.getGroups();
@@ -288,12 +324,13 @@ export default {
       setModel: "SET_MODEL",
       setSelectedEvent: "SET_SELECTED_EVENT",
       setSelectedIndex: "SET_SELECTED_INDEX",
-      setIndexActive: "SET_INDEX_VISIBILITY"
+      setIndexActive: "SET_INDEX_VISIBILITY",
+      setDisplayType: "SET_SELECTED_DISPLAY_TYPE"
     }),
     getModels() {
       fetch(`${process.env.VUE_APP_API_BASE}/models`)
-        .then((data) => data.json())
-        .then((res) => {
+        .then(data => data.json())
+        .then(res => {
           this.models = res.models;
           this.setModel(res.models[0]);
         })
@@ -306,8 +343,8 @@ export default {
       fetch(
         `${process.env.VUE_APP_API_BASE}/event_groups?model=${this.selectedModel}`
       )
-        .then((data) => data.json())
-        .then((res) => {
+        .then(data => data.json())
+        .then(res => {
           this.eventGroups = res.groups;
           this.setSelectedEvent(res.groups[0]);
         })
@@ -320,8 +357,8 @@ export default {
       fetch(
         `${process.env.VUE_APP_API_BASE}/indexes?model=${this.selectedModel}`
       )
-        .then((data) => data.json())
-        .then((res) => {
+        .then(data => data.json())
+        .then(res => {
           this.indexList = res.indexes;
           this.setSelectedIndex(res.indexes[0]);
         })
@@ -329,8 +366,8 @@ export default {
           this.indexList = [];
           this.setSelectedIndex(null);
         });
-    },
-  },
+    }
+  }
 };
 </script>
 

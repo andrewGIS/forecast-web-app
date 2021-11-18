@@ -4,7 +4,7 @@
     ref="map"
     :min-zoom="3"
   >
-    <risk-layer />
+    <risk-layer :is-visible="selectedDisplayType === 'vector'" />
     <l-tile-layer :url="osmURL" />
 
     <!-- <Legend/>
@@ -12,11 +12,11 @@
           <date-picker/> -->
     <Alert />
 
-    <!-- <l-tiff
+    <l-tiff
       :url="rasterURL"
-      :is-visible="true"
+      :is-visible="selectedDisplayType === 'raster'"
       :info-popup="false"
-    /> -->
+    />
     <l-tiff
       :url="indexURL"
       :is-visible="indexActive"
@@ -53,7 +53,7 @@ export default {
     map: null
   }),
   computed: {
-    ...mapState(["selectedModel", "selectedForescatType","selectedIndex","indexActive"]),
+    ...mapState(["selectedModel", "selectedForescatType","selectedIndex","indexActive", "selectedDisplayType"]),
     ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP"]),
     rasterURL() {
       const baseURL = `${process.env.VUE_APP_API_BASE}/get_forecast?`;
@@ -63,7 +63,7 @@ export default {
         `date=${this.SELECTED_DATE}`,
         `hour=${this.SELECTED_HOUR}`,
         `group=${this.SELECTED_EVENT_GROUP}`,
-        "datatype=raster"
+        `datatype=${this.selectedDisplayType}`
       ];
       return baseURL + params.join("&");
     },
