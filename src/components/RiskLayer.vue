@@ -39,20 +39,20 @@ export default {
     optionsGeoJSON() {
       return {
         onEachFeature: this.onEachFeature,
-        //style: this.style
+        style: this.style
       };
     },
     style() {
       return feature => {
         switch (feature.properties.level_risk) {
           case 1:
-            return { fillColor: "#cd363c"  };
+            return { fillColor: "#cd363c" , weight: 1, color: "#cd363c"  };
           case 2:
-            return { fillColor: "#e24a4b"  };
+            return { fillColor: "#e24a4b" , weight: 1, color: "#e24a4b"  };
           case 3:
-            return { fillColor: "#ff6663"  };
+            return { fillColor: "#ff6663" , weight: 1, color: "#ff6663" };
           case 4:
-            return { fillColor: "#ff6f6b"};
+            return { fillColor: "#ff6f6b", weight: 1, color: "#ff6f6b"};
         }
       };
     },
