@@ -12,9 +12,9 @@ import { mapGetters, mapState } from "vuex";
 export default {
   name: "RiskLayer",
   components: { LGeoJson },
-  props:{
+  props: {
     isVisible: {
-      type:Boolean,
+      type: Boolean,
       required: true
     }
   },
@@ -26,10 +26,15 @@ export default {
         alias: "Уровень риска"
       }
     ],
-    error_get_data: true
+    error_get_data: true,
+    style: () => {}
   }),
   computed: {
-    ...mapState(["selectedModel", "selectedForescatType"]),
+    ...mapState([
+      "selectedModel",
+      "selectedForescatType",
+      "SELECTED_EVENT_GROUP"
+    ]),
     ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP"]),
     geoJSONData() {
       if (this.isVisible && this.data && !this.error_get_data) {
@@ -48,20 +53,20 @@ export default {
         style: this.style
       };
     },
-    style() {
-      return feature => {
-        switch (feature.properties.level_risk) {
-          case 1:
-            return { fillColor: "#cd363c" , weight: 1, color: "#cd363c"  };
-          case 2:
-            return { fillColor: "#e24a4b" , weight: 1, color: "#e24a4b"  };
-          case 3:
-            return { fillColor: "#ff6663" , weight: 1, color: "#ff6663" };
-          case 4:
-            return { fillColor: "#ff6f6b", weight: 1, color: "#ff6f6b"};
-        }
-      };
-    },
+    // style() {
+    //   return feature => {
+    //     switch (feature.properties.level_risk) {
+    //       case 1:
+    //         return { fillColor: "#cd363c" , weight: 1, color: "#cd363c"  };
+    //       case 2:
+    //         return { fillColor: "#e24a4b" , weight: 1, color: "#e24a4b"  };
+    //       case 3:
+    //         return { fillColor: "#ff6663" , weight: 1, color: "#ff6663" };
+    //       case 4:
+    //         return { fillColor: "#ff6f6b", weight: 1, color: "#ff6f6b"};
+    //     }
+    //   };
+    // },
     onEachFeature() {
       return (feature, layer) => {
         const tooltipContent = (accumulator, currentValue) =>
@@ -102,6 +107,20 @@ export default {
       // }));
       //console.log(this.getGeoJSONData(this.geojsonURL));
       //this.data = this.getGeoJSONData(this.geojsonURL);
+    },
+    async SELECTED_EVENT_GROUP() {
+      const baseURL = `${process.env.VUE_APP_API_BASE}/get_legend?`;
+      const params = [
+        `model=${this.selectedModel}`,
+        `group=${this.SELECTED_EVENT_GROUP}`
+      ];
+      const url = baseURL + params.join("&");
+
+      let data = await fetch(url).then(r => r.json());
+
+      this.style = feature => {
+        return this.findColor(data, feature.properties.level_risk);
+      };
     }
   },
   methods: {
@@ -119,6 +138,10 @@ export default {
         this.error_get_data = true;
         return null;
       }
+    },
+    findColor(data, code) {
+      const { color } = data.find(({ levelCode }) => levelCode === code);
+      return { fillColor: color, weight: 1, color };
     }
   }
 };
