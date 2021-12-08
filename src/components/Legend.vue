@@ -23,6 +23,26 @@
           </v-btn>
         </v-col>  
       </v-row>
+      <v-row
+        v-for="(item,index) in legendVector" 
+        :key="index"
+        class="pa-0 ma-n2"
+        :align="'center'"
+      >
+        <v-col cols="2">
+          <div :style="{backgroundColor:item.color, width: 20 + 'px', height: 20 + 'px'}">
+            <!--{{ item.color }}-->
+          </div>
+        </v-col>
+        <v-col cols="10">
+          <span :style="{fontSize: 12 + 'px'}">
+            {{ item.alias }}
+            <br>
+            {{ `Уровень риска ${item.levelCode} ` }}
+          </span>
+        </v-col>
+        <v-row />
+      </v-row>
     </v-container>
   </v-snackbar>
   <!-- </l-control> -->
@@ -30,19 +50,23 @@
 
 <script>
 // import { LControl } from 'vue2-leaflet'
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapGetters, mapMutations } from 'vuex'
 export default {
   name: "Legend",
+  components: {
+    // LControl
+  },
   data: () => ({
-    snackbar: true
+    snackbar: true,
+    legendVector: []
   }),
   computed: {
-    ...mapState({
+    ...mapGetters(["SELECTED_EVENT_GROUP"]),
+    ...mapState(["selectedModel", "selectedDisplayType"]),
+    ...mapState(
+      {
       isVisible: "isLegendVisible"
     }),
-    legendData() {
-      return {};
-    },
     colorMaps() {
       if (!this.$_.isEmpty(this.legendData)) {
         return this.legendData.Legend[0].rules[0].symbolizers[0].Raster.colormap
@@ -79,13 +103,40 @@ export default {
       return true;
     }
   },
+  watch:{
+    async selectedDisplayType (newValue) {
+      if (newValue ==='vector') {
+        this.legendVector = await this.getVectorLegend()
+      }
+      if (newValue === 'raster') {
+        this.legendVector = []
+      }
+    },
+    async SELECTED_EVENT_GROUP () {
+      this.legendVector = await this.getVectorLegend()
+    }
+  },
+  async mounted() {
+    this.legendVector = await this.getVectorLegend()
+  },
   methods: {
     ...mapMutations({
       setLegendVisibility: "SET_LEGEND_VISIBILITY"
-    })
-  },  
-  components: {
-    // LControl
+    }),
+    async getVectorLegend() {
+
+      if (!this.SELECTED_EVENT_GROUP) return [];
+
+      const baseURL = `${process.env.VUE_APP_API_BASE}/get_legend?`;
+      const params = [
+        `model=${this.selectedModel}`,
+        `group=${this.SELECTED_EVENT_GROUP}`
+      ];
+      const url = baseURL + params.join("&");
+
+      let data = await fetch(url).then(r => r.json());
+      return data
+    }
   }
 };
 </script>
