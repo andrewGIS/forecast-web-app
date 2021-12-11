@@ -11,17 +11,12 @@
           <Options/>
           <date-picker/> -->
     <Alert />
-
-    <l-tiff
-      :url="rasterURL"
-      :is-visible="selectedDisplayType === 'raster'"
-      :info-popup="false"
-    />
-    <l-tiff
-      :url="indexURL"
+    <l-tiff 
       :is-visible="indexActive"
+      :url="indexURL" 
       :info-popup="true"
     />
+    <!-- <l-tiff /> -->
   </l-map>
 </template>
 
