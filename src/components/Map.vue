@@ -10,13 +10,19 @@
     <!-- <Legend/>
           <Options/>
           <date-picker/> -->
-    <Alert />
+    <!-- <Alert /> -->
     <l-tiff 
       :is-visible="indexActive"
       :url="indexURL" 
       :info-popup="true"
+      :type-raster="'index'"
     />
-    <!-- <l-tiff /> -->
+    <l-tiff 
+      :is-visible="selectedDisplayType === 'raster'"
+      :url="rasterURL" 
+      :info-popup="true"
+      :type-raster="'not-index'"
+    />
   </l-map>
 </template>
 
@@ -24,7 +30,7 @@
 import { LMap, LTileLayer } from "vue2-leaflet";
 // import Legend from './Legend.vue'
 // import DatePicker from './DatePicker.vue'
-import Alert from "./Alert.vue";
+//import Alert from "./Alert.vue";
 import RiskLayer from "./RiskLayer";
 import LTiff from "./LTiff.vue";
 import { mapState, mapGetters } from "vuex";
@@ -38,7 +44,7 @@ export default {
     // Legend,
     // Options,
     // DatePicker,
-    Alert,
+    // Alert,
     // eslint-disable-next-line vue/no-unused-components
     RiskLayer,
     LTiff

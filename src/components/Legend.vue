@@ -1,5 +1,4 @@
 <template>
-  <!-- <l-control position="bottomright" > -->
   <v-snackbar
     timeout="-1"
     right
@@ -26,7 +25,7 @@
       <v-row
         v-for="(item,index) in legendVector" 
         :key="index"
-        class="pa-0 ma-n2"
+        class="pa-0 ma-n2 legendLabel"
         :align="'center'"
       >
         <v-col cols="2">
@@ -35,7 +34,7 @@
           </div>
         </v-col>
         <v-col cols="10">
-          <span :style="{fontSize: 12 + 'px'}">
+          <span class="legendLabel">
             {{ item.alias }}
             <br>
             {{ `Уровень риска ${item.levelCode} ` }}
@@ -43,9 +42,52 @@
         </v-col>
         <v-row />
       </v-row>
+      <v-row
+        v-if="indexActive" 
+        class="pa-0 ma-n2 legendLabel" 
+      >
+        <v-col cols="1">
+          <div 
+            class="color" 
+            :style="{'background-image':'linear-gradient(to bottom, '+ indexColor.join(',') +')'}"
+          />
+        </v-col>
+        <v-col cols="2">
+          <div> 
+            <div class="rasterColorMapFirstValue">
+              {{ parseInt(indexRange[0]) }}
+            </div> 
+            <div>{{ parseInt(indexRange[1]) }}</div>
+          </div>
+        </v-col>
+        <v-col cols="9">
+          Значения вспомогательного растра
+        </v-col>
+      </v-row>
+      <v-row
+        v-if="selectedDisplayType === 'raster'" 
+        class="pa-0 ma-n2 legendLabel" 
+      >
+        <v-col cols="1">
+          <div 
+            class="color" 
+            :style="{'background-image':'linear-gradient(to bottom, '+ riskColor.join(',') +')'}"
+          />
+        </v-col>
+        <v-col cols="2">
+          <div> 
+            <div class="rasterColorMapFirstValue">
+              {{ parseInt(indexRange[0]) }}
+            </div> 
+            <div>{{ parseInt(indexRange[1]) }}</div>
+          </div>
+        </v-col>
+        <v-col cols="9">
+          Уровень риска
+        </v-col>
+      </v-row>
     </v-container>
   </v-snackbar>
-  <!-- </l-control> -->
 </template>
 
 <script>
@@ -62,46 +104,11 @@ export default {
   }),
   computed: {
     ...mapGetters(["SELECTED_EVENT_GROUP"]),
-    ...mapState(["selectedModel", "selectedDisplayType"]),
+    ...mapState(["selectedModel", "selectedDisplayType", "indexActive", "colorRange", "indexRange", "riskColor", "indexColor"]),
     ...mapState(
       {
       isVisible: "isLegendVisible"
-    }),
-    colorMaps() {
-      if (!this.$_.isEmpty(this.legendData)) {
-        return this.legendData.Legend[0].rules[0].symbolizers[0].Raster.colormap
-          .entries;
-      } else {
-        return {};
-      }
-    },
-    sortedColorMaps() {
-      if (!this.$_.isEmpty(this.legendData)) {
-        const initArray = this.colorMaps;
-        return initArray.sort((a, b) => {
-          return -(parseFloat(a.quantity) - parseFloat(b.quantity));
-        });
-      } else {
-        return {};
-      }
-    },
-    colorString() {
-      if (!this.$_.isEmpty(this.legendData)) {
-        return this.$_.map(this.sortedColorMaps, "color").join(",");
-      } else {
-        return "";
-      }
-    },
-    units() {
-      if (!this.$_.isEmpty(this.legendData)) {
-        return `${this.legendData.Legend[0].rules[0].title}`;
-      } else {
-        return "Нет данных";
-      }
-    },
-    visible() {
-      return true;
-    }
+    })
   },
   watch:{
     async selectedDisplayType (newValue) {
@@ -141,5 +148,16 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style scoped>
+  .color {
+    width: 20px;
+    height: 40px;
+  }
+  .legendLabel {
+    font-size: 12px;
+  }
+  .rasterColorMapFirstValue{
+    padding-bottom: 11px;
+    margin-top: -4px;
+  }   
+</style>>

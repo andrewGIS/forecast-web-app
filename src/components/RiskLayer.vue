@@ -50,7 +50,7 @@ export default {
     optionsGeoJSON() {
       return {
         onEachFeature: this.onEachFeature,
-        style: this.style
+        style: this.style,
       };
     },
     // style() {

@@ -13,7 +13,11 @@ export default new Vuex.Store({
     selectedEvent: null,
     selectedIndex: null,
     indexActive: false,
-    selectedDisplayType: "vector"
+    selectedDisplayType: "vector",
+    indexRange: [0,0],
+    riskRange: [4,0],
+    indexColor: ["yellow", "#008ae5"],
+    riskColor: ["#ff9999", "#330000"]
   },
   getters: {
     SELECTED_HOUR: state => {
@@ -70,6 +74,9 @@ export default new Vuex.Store({
     },
     SET_SELECTED_DISPLAY_TYPE(state, payload) {
       state.selectedDisplayType = payload;
+    },
+    SET_INDEX_RANGE(state, payload) {
+      state.indexRange = payload;
     },
   },
   actions: {},

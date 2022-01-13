@@ -79,6 +79,10 @@
 import { mapMutations, mapState } from "vuex";
 
 export default {
+  data:() => ({
+    //firstDate: new Date(Date.parse('21 Jul 2021 00:00:00 GMT'))
+    firstDate: null
+  }),
   computed: {
     ...mapState(["selectedForescatType"]),
     selectedDate: {
@@ -90,7 +94,7 @@ export default {
       }
     },
     generateForecastDates() {
-      let utcDate = this.convertDateToUTC(new Date());
+      let utcDate = this.convertDateToUTC(this.firstDate ?  this.firstDate : new Date());
       let utcHours = utcDate.getUTCHours();
       let startDate;
       let outDates = [];

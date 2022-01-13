@@ -4,7 +4,7 @@
 
 // FIXME color map after first load
 import L from "leaflet";
-import { mapState } from "vuex";
+import { mapMutations, mapState } from "vuex";
 
 export default {
   name: "LTiff",
@@ -20,6 +20,10 @@ export default {
     infoPopup: {
       type: Boolean,
       required: true
+    }, 
+    typeRaster: {
+      type: String,
+      required: true
     }
   },
   data: () => ({
@@ -31,89 +35,20 @@ export default {
     // upper rught bootom left corner lat lon
   }),
   computed: {
-    ...mapState(["selectedModel"]),
-    // max () {
-    //   if (!this.layer) return 1000
-    //   return Number.parseInt(Math.max(...this.layer.raster.data[0]));
-    // },
-    // min() {
-    //   if (!this.layer) return null
-    //   return Number.parseInt(Math.min(...this.layer.raster.data[0]));
-    // },
-    // options() {
-    //   return {
-    //     renderer: this.renderer,
-    //     bounds: this.bbox,
-    //     band: 0,
-    //     image: 0,
-    //     pane: "overlayPane",
-    //     onError: () => {},
-    //     sourceFunction: GeoTIFF.fromUrl,
-    //     noDataValue: 0
-    //   };
+    ...mapState(["selectedModel", "indexColor", "riskColor"])
   },
   watch: {
     url() {
-      if (!this.rasterData) {
-        // Когда добавляем первый раз
-        console.log(this.url);
-        // eslint-disable-next-line no-undef
-        d3.request(
-          //"http://localhost:5000/api/v1/get_index?model=gfs&date=20210721&forecast_type=00&hour=03&index_name=cape_255-0"
-          this.url
-        )
-          .responseType("arraybuffer")
-          .get((error, tiffData) => {
-            this.rasterData = L.ScalarField.fromGeoTIFF(tiffData.response);
-
-            this.layer = L.canvasLayer
-              .scalarField(this.rasterData, {
-                // eslint-disable-next-line no-undef
-                color: chroma
-                  .scale(["yellow", "008ae5"])
-                  .domain(this.rasterData.range || [0, 0])
-                  .classes(8),
-                opacity: 0.0
-              })
-              .addTo(this.map);
-
-            if (this.infoPopup) {
-              this.popup = L.popup();
-              this.layer.on("mousemove", e => {
-                this.dispalyPopup(e);
-              });
-            }
-          });
-      } else {
-        // eslint-disable-next-line no-undef
-        d3.request(this.url)
-          .responseType("arraybuffer")
-          .get((error, tiffData) => {
-            
-            this.rasterData = L.ScalarField.fromGeoTIFF(tiffData.response);
-            this.layer.setData(this.rasterData);
-            // eslint-disable-next-line no-undef
-            this.layer.setColor(chroma
-                  .scale(["yellow", "008ae5"])
-                  .domain(this.rasterData.range || [0, 0])
-                  .classes(8))
-            //console.log(this.layer.getData()._calculateRange());
-            // eslint-disable-next-line no-undef
-            // this.layer.setColor(
-            //   // eslint-disable-next-line no-undef
-            //   chroma
-            //     .scale(["yellow", "008ae5"])
-            //     .domain(this.rasterData.range || [0, 0])
-            //     .classes(8)
-            // );
-          });
-      }
+      if (!this.isVisible) return;
+      this.createLayer();
     },
     isVisible() {
-      if (!this.layer) return;
-
       if (this.isVisible) {
-        this.layer.setOpacity(this.opacity);
+        if (!this.layer) {
+          this.createLayer();
+        } else {
+          this.layer.setOpacity(this.opacity);
+        }
       } else {
         this.layer.setOpacity(0.0);
         if (this.popup) {
@@ -135,6 +70,9 @@ export default {
     document.body.appendChild(script);
   },
   methods: {
+    ...mapMutations({
+      setIndexRange: "SET_INDEX_RANGE"
+    }),
     findRealParent(firstVueParent) {
       let found = false;
       while (firstVueParent && !found) {
@@ -162,6 +100,65 @@ export default {
       this.popup.setContent(
         `Значение растра в точке: ${parseFloat(value).toFixed(2)}`
       );
+    },
+    createLayer() {
+      if (!this.rasterData) {
+        // eslint-disable-next-line no-undef
+        d3.request(
+          //"http://localhost:5000/api/v1/get_index?model=gfs&date=20210721&forecast_type=00&hour=03&index_name=cape_255-0"
+          this.url
+        )
+          .responseType("arraybuffer")
+          .get((error, tiffData) => {
+            this.rasterData = L.ScalarField.fromGeoTIFF(tiffData.response);
+
+            // if (this.typeRaster === "index") {
+            //   // this.layer.setFilter(v => v !== 0);
+            //   const f = (v) => v !== 0
+            //   this.$set(this.layer, "_inFilter", f)
+            // }
+
+            this.setIndexRange(this.rasterData.range);
+
+            this.layer = L.canvasLayer
+              .scalarField(this.rasterData, {
+                // eslint-disable-next-line no-undef
+                color: chroma
+                  .scale(this.typeRaster === "index" ? this.indexColor :this.riskColor)
+                  .domain(this.rasterData.range),
+                opacity: this.opacity
+              })
+              .addTo(this.map);
+
+            if (this.infoPopup) {
+              this.popup = L.popup();
+              this.layer.on("mousemove", e => {
+                this.dispalyPopup(e);
+              });
+            }
+          });
+      } else {
+        // eslint-disable-next-line no-undef
+        d3.request(this.url)
+          .responseType("arraybuffer")
+          .get((error, tiffData) => {
+            this.rasterData = L.ScalarField.fromGeoTIFF(tiffData.response);
+            this.layer.setData(this.rasterData);
+            this.setIndexRange(this.rasterData.range);
+            // eslint-disable-next-line no-undef
+
+            // if (this.typeRaster === "index") {
+            //   this.layer.setFilter((v) => v !== 0.0)
+            // }
+
+            this.layer.setColor(
+              // eslint-disable-next-line no-undef
+              chroma
+                .scale(this.typeRaster === "index" ? this.indexColor :this.riskColor)
+                .domain(this.rasterData.range)
+            );
+          });
+      }
     }
   },
   render() {
