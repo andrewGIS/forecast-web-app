@@ -129,14 +129,14 @@
           cols="10"
           class="pa-0"
         >
-          <v-select
+          <!-- <v-select
             v-model="selectedforecastType"
             :items="forecastTypes"
             filled
             label="Тип прогноза"
             dense
             solo
-          />
+          /> -->
         </v-col>
         <v-col
           cols="2"
