@@ -27,6 +27,13 @@ export default new Vuex.Store({
       }
 
       let hour = state.selectedDate.getUTCHours();
+      //TODO нужно как то посчитать ближайший срок прогноза, так как у нас данные 
+      // с разрезом 3 часа,а может быть выбрано срок между двумя прогнозами
+      // для часового пояса +500 такая формула, но лучше бы какую-то формулу придумать
+      hour -= 1
+      if (hour === 0){
+        return '24'
+      }
       return hour = hour < 10 ? `0${hour}` : `${hour}`
     },
     SELECTED_DATE: state => {

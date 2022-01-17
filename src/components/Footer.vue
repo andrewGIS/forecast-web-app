@@ -6,7 +6,7 @@
       justify="space-between"
     >
       <v-col
-        cols="1"
+        cols="auto"
         class="text-left"
       >
         <v-btn
@@ -22,22 +22,43 @@
 
       <!-- Date and hour picker -->
       <!-- TODO Extract date picker to separate component-->
+      <v-col cols="auto">
+        <v-tooltip
+          v-model="dateIsActive"
+          top
+          z-index="10000"
+        >
+          <template #activator="{ attrs }">
+            <v-btn 
+              v-bind="attrs"
+              @click="dateIsActive = !dateIsActive"
+            >
+              {{ selectedDate }}
+            </v-btn>
+          </template>
+          <div class="date-picker-wrapper">
+            <v-date-picker
+              v-model="selectedDate" 
+              locale="ru-ru"
+              :allowed-dates="avialableDatesFunc"
+            />
+          </div>
+        </v-tooltip>
+      </v-col>
       <v-col
-        cols="9"
+        cols="auto"
         сlass="text-center"
       >
-        Время прогноза
-
         <v-slide-group
-          v-model="selectedDate"
+          v-model="selectedHour"
           show-arrows
           center-active
         >
           <v-slide-item
-            v-for="(date, index) in generateForecastDates"
+            v-for="(hour, index) in forecastHours"
             :key="index"
             v-slot="{ active, toggle }"
-            :value="date.utcDate"
+            :value="hour.value"
           >
             <v-btn
               class="mx-2"
@@ -47,9 +68,7 @@
               rounded
               @click="toggle"
             >
-              {{ date.localeDate.split(",")[0] }}
-              <br>
-              {{ date.localeDate.split(",")[1] }}
+              {{ hour.label }}
               <!-- {{ hour2string(date.getHours(), true )}} -->
             </v-btn>
           </v-slide-item>
@@ -58,7 +77,7 @@
 
       <!-- Legend picker -->
       <v-col
-        cols="1"
+        cols="auto"
         class="text-right"
       >
         <v-btn
@@ -79,57 +98,118 @@
 import { mapMutations, mapState } from "vuex";
 
 export default {
-  data:() => ({
-    //firstDate: new Date(Date.parse('21 Jul 2021 00:00:00 GMT'))
-    firstDate: null
+  data: () => ({
+    dateIsActive: false,
+    firstDate: null,
+    // TODO get from backend
+    forecastHours: [
+      {
+        value: 3,
+        label: "03:00"
+      },
+      {
+        value: 6,
+        label: "06:00"
+      },
+      {
+        value: 9,
+        label: "09:00"
+      },
+      {
+        value: 12,
+        label: "12:00"
+      },
+      {
+        value: 15,
+        label: "15:00"
+      },
+            {
+        value: 18,
+        label: "18:00"
+      },
+      {
+        value: 21,
+        label: "21:00"
+      },
+      {
+        value: 24,
+        label: "24:00"
+      }],
+    selectedHour: 3,
+    //selectedDate: (`${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`)
+    selectedDate: `2022-01-13`,
+    avialableDates: []
   }),
   computed: {
-    ...mapState(["selectedForescatType"]),
-    selectedDate: {
-      get() {
-        return this.$store.state.selectedDate;
-      },
-      set(value) {
-        this.setDate(value);
-      }
+    ...mapState(["selectedForescatType", "selectedModel"]),
+    // selectedDate: {
+    //   get() {
+    //     return this.$store.state.selectedDate;
+    //   },
+    //   set(value) {
+    //     this.setDate(value);
+    //   }
+    // },
+    selectedDateObj(){
+      let dateLocal = new Date(this.selectedDate)
+      
+      dateLocal.setHours(this.selectedHour) 
+      return dateLocal
     },
     generateForecastDates() {
-      let utcDate = this.convertDateToUTC(this.firstDate ?  this.firstDate : new Date());
+      let utcDate = this.convertDateToUTC(
+        this.firstDate ? this.firstDate : new Date()
+      );
       let utcHours = utcDate.getUTCHours();
       let startDate;
       let outDates = [];
 
       // if possible refactor
-      if (utcHours < 12 && this.selectedForescatType === "00"){
-        startDate = new Date(utcDate.setUTCHours(0, 0, 0))
+      if (utcHours < 12 && this.selectedForescatType === "00") {
+        startDate = new Date(utcDate.setUTCHours(0, 0, 0));
       }
-      if (utcHours < 12 && this.selectedForescatType === "12"){
-        startDate = new Date(utcDate.setUTCHours(12, 0, 0))
+      if (utcHours < 12 && this.selectedForescatType === "12") {
+        startDate = new Date(utcDate.setUTCHours(12, 0, 0));
         startDate = this.shiftDate(startDate, "Hours", -24);
       }
-      if(utcHours >= 12 && this.selectedForescatType === "00"){
-        startDate = new Date(utcDate.setUTCHours(0, 0, 0))
+      if (utcHours >= 12 && this.selectedForescatType === "00") {
+        startDate = new Date(utcDate.setUTCHours(0, 0, 0));
       }
-      if(utcHours >= 12 && this.selectedForescatType === "12"){
-        startDate = new Date(utcDate.setUTCHours(12, 0, 0))
+      if (utcHours >= 12 && this.selectedForescatType === "12") {
+        startDate = new Date(utcDate.setUTCHours(12, 0, 0));
       }
 
       for (let index = 0; index < 8; index++) {
         let newValue = new Date(this.shiftDate(startDate, "Hours", 3));
         let obj = {};
         obj.utcDate = newValue;
-        obj.localeDate = newValue.toLocaleString()
+        obj.localeDate = newValue.toLocaleString();
         outDates.push(obj);
       }
 
       return outDates;
     }
   },
-  mounted() {
-    this.selectedDate = this.generateForecastDates[0].utcDate;
+  // mounted() {
+  //   this.selectedDate = this.generateForecastDates[0].utcDate;
+  // },
+  watch: {
+    selectedDateObj (value) {
+      this.setDate(value)
+    }
+  },
+  async mounted() {
+    const baseURL = `${process.env.VUE_APP_API_BASE}/get_dates?`;
+      const params = [
+        `model=${this.selectedModel}`,
+      ]
+    const url = baseURL + params.join("&");
+    let response = await fetch(url);
+    let dates = await response.json();
+    this.avialableDates = dates
   },
   methods: {
-    ...mapMutations({ 
+    ...mapMutations({
       setConfigVisibility: "SET_CONFIG_VISIBILITY",
       setLegendVisibility: "SET_LEGEND_VISIBILITY",
       setDate: "SET_SELECTED_DATE"
@@ -145,7 +225,7 @@ export default {
       // console.log(shiftDate(new Date, 'Date', -21));
     },
     hour2string(hour, full) {
-      hour = hour < 10 ? `0${hour}:00` : `${hour}:00`  
+      hour = hour < 10 ? `0${hour}:00` : `${hour}:00`;
 
       return full ? hour : hour.split(":")[0];
     },
@@ -159,7 +239,22 @@ export default {
         date.getUTCSeconds()
       );
       return new Date(utc);
-    }
+    },
+    avialableDatesFunc(val){
+      return this.avialableDates.includes(val);
+    } 
   }
 };
 </script>
+<style scoped>
+
+.v-tooltip__content {
+  padding: 0px 0px;
+  opacity: 1.0 !important
+}
+
+.date-picker-wrapper {
+  pointer-events: all
+}
+</style>
+
