@@ -81,7 +81,7 @@ export default {
       const baseURL = `${process.env.VUE_APP_API_BASE}/get_forecast?`;
       const params = [
         `model=${this.selectedModel}`,
-        `forecast_type=${this.selectedForescatType}`,
+        //`forecast_type=${this.selectedForescatType}`,
         `date=${this.SELECTED_DATE}`,
         `hour=${this.SELECTED_HOUR}`,
         `group=${this.SELECTED_EVENT_GROUP}`,
