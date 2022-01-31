@@ -4,6 +4,12 @@
     ref="map"
     :min-zoom="3"
   >
+    <l-marker 
+      v-if="postitonLatLng" 
+      :lat-lng="postitonLatLng"
+    >
+      <l-popup>Ваша геопозиция</l-popup>
+    </l-marker>
     <risk-layer :is-visible="selectedDisplayType === 'vector'" />
     <l-tile-layer :url="osmURL" />
 
@@ -27,7 +33,7 @@
 </template>
 
 <script>
-import { LMap, LTileLayer } from "vue2-leaflet";
+import { LMap, LMarker, LTileLayer, LPopup } from "vue2-leaflet";
 // import Legend from './Legend.vue'
 // import DatePicker from './DatePicker.vue'
 //import Alert from "./Alert.vue";
@@ -35,6 +41,15 @@ import RiskLayer from "./RiskLayer";
 import LTiff from "./LTiff.vue";
 import { mapState, mapGetters } from "vuex";
 import {latLng} from "leaflet";
+
+import { Icon } from 'leaflet';
+
+delete Icon.Default.prototype._getIconUrl;
+Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
 
 export default {
   name: "Map",
@@ -47,12 +62,15 @@ export default {
     // Alert,
     // eslint-disable-next-line vue/no-unused-components
     RiskLayer,
-    LTiff
+    LTiff,
+    LMarker,
+    LPopup
   },
 
   data: () => ({
     osmURL: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    map: null
+    map: null,
+    postitonLatLng: null
   }),
   computed: {
     ...mapState(["selectedModel", "selectedForescatType","selectedIndex","indexActive", "selectedDisplayType"]),
@@ -90,7 +108,8 @@ export default {
   },
   methods:{
     geoSuccess(e) {
-      this.$refs.map.mapObject.setView(latLng(e.coords.latitude, e.coords.longitude), 5)
+      this.$refs.map.mapObject.setView(latLng(e.coords.latitude, e.coords.longitude), 5);
+      this.postitonLatLng = latLng(e.coords.latitude, e.coords.longitude);
     }
   }
 };
