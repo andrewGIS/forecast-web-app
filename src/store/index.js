@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import {formatAsUTCDate} from '../utils/utils';
 
 Vue.use(Vuex);
 
@@ -54,6 +55,7 @@ export default new Vuex.Store({
       }],
   },
   getters: {
+    // Выбранный час в UTС
     SELECTED_HOUR: state => {
 
       if (!state.selectedDate) { 
@@ -72,21 +74,14 @@ export default new Vuex.Store({
       }
       return hour = hour < 10 ? `0${hour}` : `${hour}`
     },
+    //Выбранная дата в UTC
     SELECTED_DATE: state => {
 
       if (!state.selectedDate) { 
         return ""
       }
 
-      let sDate = state.selectedDate;
-
-      let month = sDate.getUTCMonth() + 1;
-      month = month < 10 ? `0${month}` : month.toString();
-
-      let day = sDate.getUTCDate();
-      day = day < 10 ? `0${day}` : day.toString();
-
-      return `${sDate.getFullYear()}${month}${day}`;  //sample 20150722
+      return formatAsUTCDate(state.selectedDate)  //sample 20150722
     },
     SELECTED_EVENT_GROUP: state => state.selectedEvent ? state.selectedEvent.name : null
   },

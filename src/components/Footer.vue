@@ -96,18 +96,18 @@
 
 <script>
 import { mapMutations, mapState } from "vuex";
+import {formatAsUTCDate} from '../utils/utils';
 
 export default {
   data: () => ({
     dateIsActive: false,
     firstDate: null,
     selectedHour: 3,
-    //selectedDate: (`${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`)
-    selectedDate: `2022-01-13`,
-    avialableDates: []
+    selectedDate: formatAsUTCDate(new Date(),'-'),
+    avialableDates: [] // Даты для которых есть прогноз
   }),
   computed: {
-    ...mapState(["selectedForescatType", "selectedModel"]),
+    ...mapState(["selectedForescatType", "selectedModel", "forecastHours"]),
     // selectedDate: {
     //   get() {
     //     return this.$store.state.selectedDate;
