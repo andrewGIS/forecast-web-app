@@ -5,6 +5,7 @@
     :value="isVisible"
     timeout="-1"
     max-width="100"
+    :style="{zIndex:1002}"
   >
     <v-container fluid>
       <v-row justify="end">

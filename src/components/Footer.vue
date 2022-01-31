@@ -2,15 +2,16 @@
   <v-container>
     <!-- Config button -->
     <v-row
-      align="center"
+      align="baseline"
       justify="space-between"
+      align-sm="center"
+      justify-sm="space-around"
     >
-      <v-col
-        cols="auto"
-        class="text-left"
+      <v-col 
+        cols="2" 
+        sm="1"
       >
         <v-btn
-          class="mx-4"
           icon
           @click="setConfigVisibility(true)"
         >
@@ -20,21 +21,32 @@
         </v-btn>
       </v-col>
 
-      <!-- Date and hour picker -->
-      <!-- TODO Extract date picker to separate component-->
-      <v-col cols="auto">
+      <v-col 
+        cols="4" 
+        sm="2"
+      >
         <v-tooltip
           v-model="dateIsActive"
           top
-          z-index="10000"
+          z-index="1000"
         >
           <template #activator="{ attrs }">
-            <v-btn 
+            <v-btn
+              class="d-flex d-sm-flex"
               v-bind="attrs"
               @click="dateIsActive = !dateIsActive"
             >
-              {{ selectedDate }}
+              {{ selectedDate }} 
             </v-btn>
+            <!-- <v-btn
+              class="d-xs-flex d-sm-none"
+              v-bind="attrs"
+              @click="dateIsActive = !dateIsActive"
+            >
+              <v-icon>
+                mdi-clock
+              </v-icon>
+            </v-btn> -->
           </template>
           <div class="date-picker-wrapper">
             <v-date-picker
@@ -45,23 +57,25 @@
           </div>
         </v-tooltip>
       </v-col>
-      <v-col
-        cols="auto"
-        сlass="text-center"
+
+      <v-col 
+        cols="4" 
+        sm="8"
       >
         <v-slide-group
           v-model="selectedHour"
           show-arrows
           center-active
+          class="d-none d-sm-flex"
         >
           <v-slide-item
             v-for="(hour, index) in forecastHours"
             :key="index"
             v-slot="{ active, toggle }"
             :value="hour.value"
+            class="ma-1"
           >
             <v-btn
-              class="mx-2"
               :input-value="active"
               active-class="purple white--text"
               depressed
@@ -69,19 +83,28 @@
               @click="toggle"
             >
               {{ hour.label }}
-              <!-- {{ hour2string(date.getHours(), true )}} -->
             </v-btn>
           </v-slide-item>
         </v-slide-group>
+
+        <v-select
+          v-model="selectedHour"
+          :style="{fontSize: '0.9rem', zIndex:1001}"
+          class="d-xs-flex d-sm-none"
+          :items="forecastHours"
+          item-value="value"
+          item-text="label"
+          :dense="true"
+          solo
+        />
       </v-col>
 
       <!-- Legend picker -->
-      <v-col
-        cols="auto"
-        class="text-right"
+      <v-col 
+        cols="2"
+        sm="1"
       >
         <v-btn
-          class="mx-4"
           icon
           @click="setLegendVisibility(true)"
         >

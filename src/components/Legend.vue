@@ -5,6 +5,7 @@
     :width="30"
     app
     :value="isVisible"
+    :style="{zIndex:1002}"
   >
     <v-container fluid>
       <v-row align="center">
