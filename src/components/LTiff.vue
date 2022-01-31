@@ -31,8 +31,6 @@ export default {
     rasterData: null,
     opacity: 0.5,
     popup: null
-    //TODO Request from server
-    // upper rught bootom left corner lat lon
   }),
   computed: {
     ...mapState(["selectedModel", "indexColor", "riskColor"])
@@ -105,9 +103,9 @@ export default {
       if (!this.rasterData) {
         // eslint-disable-next-line no-undef
         d3.request(
-          //"http://localhost:5000/api/v1/get_index?model=gfs&date=20210721&forecast_type=00&hour=03&index_name=cape_255-0"
-          //this.url
-            'http://localhost:8000/get_tiff'
+          //`${process.env.VUE_APP_API_BASE}/get_index?model=gfs&date=20210721&forecast_type=00&hour=03&index_name=cape_255-0`
+          this.url
+          //  'http://localhost:8000/get_tiff'
         )
           .responseType("blob")
           .get(async (error, tiffData) => {
