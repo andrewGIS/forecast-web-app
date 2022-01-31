@@ -84,7 +84,7 @@ export default {
       }
       return firstVueParent;
     },
-    dispalyPopup(e) {
+    displayPopup(e) {
       if (!this.isVisible) {
         return;
       }
@@ -106,11 +106,13 @@ export default {
         // eslint-disable-next-line no-undef
         d3.request(
           //"http://localhost:5000/api/v1/get_index?model=gfs&date=20210721&forecast_type=00&hour=03&index_name=cape_255-0"
-          this.url
+          //this.url
+            'http://localhost:8000/get_tiff'
         )
-          .responseType("arraybuffer")
-          .get((error, tiffData) => {
-            this.rasterData = L.ScalarField.fromGeoTIFF(tiffData.response);
+          .responseType("blob")
+          .get(async (error, tiffData) => {
+            let data = await tiffData.response.arrayBuffer()
+            this.rasterData = L.ScalarField.fromGeoTIFF(data);
 
             // if (this.typeRaster === "index") {
             //   // this.layer.setFilter(v => v !== 0);
@@ -133,7 +135,7 @@ export default {
             if (this.infoPopup) {
               this.popup = L.popup();
               this.layer.on("mousemove", e => {
-                this.dispalyPopup(e);
+                this.displayPopup(e);
               });
             }
           });

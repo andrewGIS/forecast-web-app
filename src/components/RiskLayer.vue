@@ -95,18 +95,8 @@ export default {
   // },
   watch: {
     async geojsonURL() {
-      //console.log(this.geojsonURL);
-      // # TODO check it go it to async method
       const result = await this.getGeoJSONData(this.geojsonURL);
       this.data = result;
-
-      // .then(data => (this.data = data)
-      // .catch(error => {
-      //   console.log(error)
-      //   this.error_get_data = true;
-      // }));
-      //console.log(this.getGeoJSONData(this.geojsonURL));
-      //this.data = this.getGeoJSONData(this.geojsonURL);
     },
     async SELECTED_EVENT_GROUP() {
       const baseURL = `${process.env.VUE_APP_API_BASE}/get_legend?`;
