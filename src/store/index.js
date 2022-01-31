@@ -16,8 +16,42 @@ export default new Vuex.Store({
     selectedDisplayType: "vector",
     indexRange: [0,0],
     riskRange: [4,0],
-    indexColor: ["yellow", "#008ae5"],
-    riskColor: ["#ff9999", "#330000"]
+    indexColor: ["yellow", "#008ae5"], // Градация цветов для отображения растра растров индексов
+    riskColor: ["#ff9999", "#330000"], // Градация цветов для отображения растра риска появления явления
+    // TODO get from backend
+    forecastHours: [
+      {
+        value: 3,
+        label: "03:00"
+      },
+      {
+        value: 6,
+        label: "06:00"
+      },
+      {
+        value: 9,
+        label: "09:00"
+      },
+      {
+        value: 12,
+        label: "12:00"
+      },
+      {
+        value: 15,
+        label: "15:00"
+      },
+            {
+        value: 18,
+        label: "18:00"
+      },
+      {
+        value: 21,
+        label: "21:00"
+      },
+      {
+        value: 24,
+        label: "24:00"
+      }],
   },
   getters: {
     SELECTED_HOUR: state => {
@@ -26,11 +60,13 @@ export default new Vuex.Store({
         return ""
       }
 
-      let hour = state.selectedDate.getUTCHours();
-      //TODO нужно как то посчитать ближайший срок прогноза, так как у нас данные 
-      // с разрезом 3 часа,а может быть выбрано срок между двумя прогнозами
-      // для часового пояса +500 такая формула, но лучше бы какую-то формулу придумать
-      hour -= 1
+      let value = state.selectedDate.getUTCHours();
+      // Считаем наиболее близкий прогноз с учетом смещения от UTC
+      // учитываем что у нас прогноз с разрезом 3 часа, хотя это неважно,
+      // мы берем из тех, которые указаны в forecastHours
+      const hours = state.forecastHours.map(h=>h.value)
+      const diffs = hours.map(h => Math.abs(value-h));
+      let hour = hours[diffs.indexOf(Math.min(...diffs))];
       if (hour === 0){
         return '24'
       }

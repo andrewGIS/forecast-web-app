@@ -101,40 +101,6 @@ export default {
   data: () => ({
     dateIsActive: false,
     firstDate: null,
-    // TODO get from backend
-    forecastHours: [
-      {
-        value: 3,
-        label: "03:00"
-      },
-      {
-        value: 6,
-        label: "06:00"
-      },
-      {
-        value: 9,
-        label: "09:00"
-      },
-      {
-        value: 12,
-        label: "12:00"
-      },
-      {
-        value: 15,
-        label: "15:00"
-      },
-            {
-        value: 18,
-        label: "18:00"
-      },
-      {
-        value: 21,
-        label: "21:00"
-      },
-      {
-        value: 24,
-        label: "24:00"
-      }],
     selectedHour: 3,
     //selectedDate: (`${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`)
     selectedDate: `2022-01-13`,
