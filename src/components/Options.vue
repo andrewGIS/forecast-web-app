@@ -120,7 +120,7 @@
         </v-row>
       </v-row>
 
-      <v-row class="pa-0">
+      <!--<v-row class="pa-0">
         <v-col class="pa-0">
           Время прогноза
         </v-col>
@@ -130,14 +130,14 @@
           cols="10"
           class="pa-0"
         >
-          <!-- <v-select
+          <v-select
             v-model="selectedforecastType"
             :items="forecastTypes"
             filled
             label="Тип прогноза"
             dense
             solo
-          /> -->
+          /> 
         </v-col>
         <v-col
           cols="2"
@@ -153,7 +153,7 @@
             </v-icon>
           </v-btn>
         </v-col>
-      </v-row>
+      </v-row>-->
 
       <v-row class="pa-0">
         <v-col class="pa-0">
