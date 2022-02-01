@@ -135,7 +135,6 @@ import {formatAsUTCDate} from '../utils/utils';
 export default {
   data: () => ({
     dateIsActive: false,
-    firstDate: null,
     selectedHour: 3,
     selcetedHourLabel: "03:00", // для маленьких дисплеев
     selectedDate: formatAsUTCDate(new Date(),'-'),
@@ -143,57 +142,12 @@ export default {
   }),
   computed: {
     ...mapState(["selectedForescatType", "selectedModel", "forecastHours"]),
-    // selectedDate: {
-    //   get() {
-    //     return this.$store.state.selectedDate;
-    //   },
-    //   set(value) {
-    //     this.setDate(value);
-    //   }
-    // },
     selectedDateObj(){
       let dateLocal = new Date(this.selectedDate)
-      
       dateLocal.setHours(this.selectedHour) 
       return dateLocal
-    },
-    generateForecastDates() {
-      let utcDate = this.convertDateToUTC(
-        this.firstDate ? this.firstDate : new Date()
-      );
-      let utcHours = utcDate.getUTCHours();
-      let startDate;
-      let outDates = [];
-
-      // if possible refactor
-      if (utcHours < 12 && this.selectedForescatType === "00") {
-        startDate = new Date(utcDate.setUTCHours(0, 0, 0));
-      }
-      if (utcHours < 12 && this.selectedForescatType === "12") {
-        startDate = new Date(utcDate.setUTCHours(12, 0, 0));
-        startDate = this.shiftDate(startDate, "Hours", -24);
-      }
-      if (utcHours >= 12 && this.selectedForescatType === "00") {
-        startDate = new Date(utcDate.setUTCHours(0, 0, 0));
-      }
-      if (utcHours >= 12 && this.selectedForescatType === "12") {
-        startDate = new Date(utcDate.setUTCHours(12, 0, 0));
-      }
-
-      for (let index = 0; index < 8; index++) {
-        let newValue = new Date(this.shiftDate(startDate, "Hours", 3));
-        let obj = {};
-        obj.utcDate = newValue;
-        obj.localeDate = newValue.toLocaleString();
-        outDates.push(obj);
-      }
-
-      return outDates;
     }
   },
-  // mounted() {
-  //   this.selectedDate = this.generateForecastDates[0].utcDate;
-  // },
   watch: {
     selectedDateObj (value) {
       this.setDate(value)
@@ -215,32 +169,6 @@ export default {
       setLegendVisibility: "SET_LEGEND_VISIBILITY",
       setDate: "SET_SELECTED_DATE"
     }),
-    shiftDate(date, what, count) {
-      let proc1 = "get" + what,
-        proc2 = "set" + what;
-
-      let value = Date.prototype[proc1].call(date);
-      Date.prototype[proc2].call(date, value + count);
-      return date;
-
-      // console.log(shiftDate(new Date, 'Date', -21));
-    },
-    hour2string(hour, full) {
-      hour = hour < 10 ? `0${hour}:00` : `${hour}:00`;
-
-      return full ? hour : hour.split(":")[0];
-    },
-    convertDateToUTC(date) {
-      let utc = Date.UTC(
-        date.getUTCFullYear(),
-        date.getUTCMonth(),
-        date.getUTCDate(),
-        date.getUTCHours(),
-        date.getUTCMinutes(),
-        date.getUTCSeconds()
-      );
-      return new Date(utc);
-    },
     avialableDatesFunc(val){
       return this.avialableDates.includes(val);
     },
