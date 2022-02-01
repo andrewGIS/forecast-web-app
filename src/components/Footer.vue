@@ -141,7 +141,7 @@ export default {
     avialableDates: [] // Даты для которых есть прогноз
   }),
   computed: {
-    ...mapState(["selectedForescatType", "selectedModel", "forecastHours"]),
+    ...mapState(["selectedModel", "forecastHours"]),
     selectedDateObj(){
       let dateLocal = new Date(this.selectedDate)
       dateLocal.setHours(this.selectedHour) 

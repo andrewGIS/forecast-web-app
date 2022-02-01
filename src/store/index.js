@@ -10,7 +10,6 @@ export default new Vuex.Store({
     isLegendVisible: false,
     selectedDate: null,
     selectedModel: "gfs",
-    selectedForescatType: "00",
     selectedEvent: null,
     selectedIndex: null,
     indexActive: false,
@@ -104,9 +103,6 @@ export default new Vuex.Store({
     },
     SET_LEGEND_VISIBILITY(state, payload) {
       state.isLegendVisible = payload;
-    },
-    SET_FORECAST_TYPE(state, payload) {
-      state.selectedForescatType = payload;
     },
     SET_MODEL(state, payload) {
       state.selectedModel = payload;

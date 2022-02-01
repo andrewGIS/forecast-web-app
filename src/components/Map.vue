@@ -73,13 +73,12 @@ export default {
     postitonLatLng: null
   }),
   computed: {
-    ...mapState(["selectedModel", "selectedForescatType","selectedIndex","indexActive", "selectedDisplayType"]),
+    ...mapState(["selectedModel","selectedIndex","indexActive", "selectedDisplayType"]),
     ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP"]),
     rasterURL() {
       const baseURL = `${process.env.VUE_APP_API_BASE}/get_forecast?`;
       const params = [
         `model=${this.selectedModel}`,
-        `forecast_type=${this.selectedForescatType}`,
         `date=${this.SELECTED_DATE}`,
         `hour=${this.SELECTED_HOUR}`,
         `group=${this.SELECTED_EVENT_GROUP}`,
@@ -93,7 +92,6 @@ export default {
 
       const params = [
         `model=${this.selectedModel}`,
-        `forecast_type=${this.selectedForescatType}`,
         `date=${this.SELECTED_DATE}`,
         `hour=${this.SELECTED_HOUR}`,
         `index_name=${this.selectedIndex}`
