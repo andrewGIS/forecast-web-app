@@ -2,9 +2,7 @@
   <v-container>
     <!-- Config button -->
     <v-row
-      align="baseline"
-      justify="space-between"
-      align-sm="center"
+      align="center"
       justify-sm="space-around"
     >
       <v-col 
@@ -87,16 +85,29 @@
           </v-slide-item>
         </v-slide-group>
 
-        <v-select
-          v-model="selectedHour"
-          :style="{fontSize: '0.9rem', zIndex:1001}"
-          class="d-xs-flex d-sm-none"
-          :items="forecastHours"
-          item-value="value"
-          item-text="label"
-          :dense="true"
-          solo
-        />
+        <div class="d-xs-flex d-sm-none">
+          <v-btn
+            icon
+            small
+            @click="moveHour(-1)"
+          >
+            <v-icon>
+              mdi-skip-previous
+            </v-icon>
+          </v-btn>
+          <span :style="{fontSize: '0.875rem', fontWeight: 500}">
+            {{ selcetedHourLabel }}
+          </span>
+          <v-btn
+            icon
+            small
+            @click="moveHour(1)"
+          >
+            <v-icon>
+              mdi-skip-next
+            </v-icon>
+          </v-btn>
+        </div>
       </v-col>
 
       <!-- Legend picker -->
@@ -109,7 +120,7 @@
           @click="setLegendVisibility(true)"
         >
           <v-icon size="24px">
-            mdi-cog-outline
+            mdi-map-legend
           </v-icon>
         </v-btn>
       </v-col>
@@ -126,6 +137,7 @@ export default {
     dateIsActive: false,
     firstDate: null,
     selectedHour: 3,
+    selcetedHourLabel: "03:00", // для маленьких дисплеев
     selectedDate: formatAsUTCDate(new Date(),'-'),
     avialableDates: [] // Даты для которых есть прогноз
   }),
@@ -231,7 +243,13 @@ export default {
     },
     avialableDatesFunc(val){
       return this.avialableDates.includes(val);
-    } 
+    },
+    moveHour(step) {
+      const currentIndex = this.forecastHours.findIndex(({value})=> value === this.selectedHour)
+      if(!this.forecastHours[currentIndex + step]){return}
+      this.selectedHour = this.forecastHours[currentIndex + step].value
+      this.selcetedHourLabel = this.forecastHours[currentIndex + step].label
+    }
   }
 };
 </script>
