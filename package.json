@@ -9,6 +9,7 @@
     "build-docker": "vue-cli-service build && docker build -t forecast_frontend:latest . && docker save --output D://Work//_new_features//forecast//web//forecast-frontend.tar forecast_frontend:latest"
   },
   "dependencies": {
+    "axios": "^0.25.0",
     "core-js": "^3.6.5",
     "ih-leaflet-canvaslayer-field": "^1.5.3",
     "leaflet": "^1.7.1",
