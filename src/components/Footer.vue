@@ -5,6 +5,7 @@
       align="center"
       justify-sm="space-around"
     >
+      <!-- Options picker -->
       <v-col 
         cols="2" 
         sm="1"
@@ -18,7 +19,7 @@
           </v-icon>
         </v-btn>
       </v-col>
-
+      <!-- Date picker -->
       <v-col 
         cols="4" 
         sm="2"
@@ -50,12 +51,13 @@
             <v-date-picker
               v-model="selectedDate" 
               locale="ru-ru"
-              :allowed-dates="avialableDatesFunc"
+              :allowed-dates="availableDatesFunc"
             />
           </div>
         </v-tooltip>
       </v-col>
 
+      <!-- Hour picker -->
       <v-col 
         cols="4" 
         sm="8"
@@ -96,7 +98,7 @@
             </v-icon>
           </v-btn>
           <span :style="{fontSize: '0.875rem', fontWeight: 500}">
-            {{ selcetedHourLabel }}
+            {{ selectedHourLabel }}
           </span>
           <v-btn
             icon
@@ -136,9 +138,11 @@ export default {
   data: () => ({
     dateIsActive: false,
     selectedHour: 3,
-    selcetedHourLabel: "03:00", // для маленьких дисплеев
-    selectedDate: formatAsUTCDate(new Date(),'-'),
-    avialableDates: [] // Даты для которых есть прогноз
+    selectedHourLabel: "03:00", // для маленьких дисплеев
+    // eslint-disable-next-line
+    selectedDate1: formatAsUTCDate(new Date(),'-'),
+    selectedDate: '2021-05-15',
+    availableDates: [] // Даты для которых есть прогноз
   }),
   computed: {
     ...mapState(["selectedModel", "forecastHours"]),
@@ -146,7 +150,7 @@ export default {
       let dateLocal = new Date(this.selectedDate)
       dateLocal.setHours(this.selectedHour) 
       return dateLocal
-    }
+    },
   },
   watch: {
     selectedDateObj (value) {
@@ -161,7 +165,7 @@ export default {
     const url = baseURL + params.join("&");
     let response = await fetch(url);
     let dates = await response.json();
-    this.avialableDates = dates
+    this.availableDates = dates
   },
   methods: {
     ...mapMutations({
@@ -169,14 +173,14 @@ export default {
       setLegendVisibility: "SET_LEGEND_VISIBILITY",
       setDate: "SET_SELECTED_DATE"
     }),
-    avialableDatesFunc(val){
-      return this.avialableDates.includes(val);
+    availableDatesFunc(val){
+      return this.availableDates.includes(val);
     },
     moveHour(step) {
       const currentIndex = this.forecastHours.findIndex(({value})=> value === this.selectedHour)
-      if(!this.forecastHours[currentIndex + step]){return}
+      if (!this.forecastHours[currentIndex + step] ) return
       this.selectedHour = this.forecastHours[currentIndex + step].value
-      this.selcetedHourLabel = this.forecastHours[currentIndex + step].label
+      this.selectedHourLabel = this.forecastHours[currentIndex + step].label
     }
   }
 };
