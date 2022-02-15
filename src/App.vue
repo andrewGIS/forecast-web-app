@@ -7,6 +7,8 @@
     >
       Оценка риска конвективных ОЯ на территории Урала
       <v-spacer />
+      <order-notification/>
+      <auth/>
     </v-app-bar>
 
     <v-main>
@@ -24,11 +26,15 @@ import Map from './components/Map';
 import Footer from './components/Footer'
 import Options from './components/Options'
 import Legend from './components/Legend'
+import Auth from "./components/Auth";
+import OrderNotification from "./components/OrderNotification";
 
 export default {
   name: 'App',
 
   components: {
+    OrderNotification,
+    Auth,
     Map,
     Footer,
     Options,
