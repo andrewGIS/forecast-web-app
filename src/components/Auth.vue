@@ -63,7 +63,7 @@
 </template>
 
 <script>
-  import {mapActions} from "vuex"
+  import {mapActions, mapState} from "vuex"
 
   export default {
     name: "Auth",
@@ -72,24 +72,20 @@
       username: null,
       password: null
     }),
-    methods:{
-      ...mapActions({login: 'login'}),
-      auth () {
-        const baseUrl = `${process.env.VUE_APP_API_BASE}/auth/token`
-        fetch(baseUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            username: this.username ,
-            password: this.password
-          }),
-        })
-        .then(res=>res.json())
-        .then(d => d.access ? alert('Success') : Promise.reject('Error auth'))
-        .catch(()=>alert('Error'))
+    computed: {
+      ...mapState({
+        isLogin: state => state.auth.isLogin
+      })
+    },
+    watch: {
+      isLogin(newValue) {
+        if(newValue) {
+          this.dialog = !newValue;
+        }
       }
+    },
+    methods:{
+      ...mapActions({login: 'login'})
     }
   }
 </script>
