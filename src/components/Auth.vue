@@ -4,7 +4,9 @@
     max-width="600px"
     hide-overlay
   >
-    <template #activator="{ on }">
+    <template
+      #activator="{ on }" 
+    >
       <v-btn
         icon
         v-on="on"
@@ -35,11 +37,14 @@
 
       <!--   Вход   -->
       <!--   Выделить в отедльные компоненты  -->
-      <v-tab-item :key="1" :value="'tab-1'">
+      <v-tab-item
+        :key="1"
+        :value="'tab-1'"
+      >
         <v-card>
-<!--          <v-card-title>-->
-<!--            <span class="text-h5">Войти</span>-->
-<!--          </v-card-title>-->
+          <!--          <v-card-title>-->
+          <!--            <span class="text-h5">Войти</span>-->
+          <!--          </v-card-title>-->
           <v-card-text>
             <v-container>
               <v-row>
@@ -60,7 +65,7 @@
                 </v-col>
               </v-row>
             </v-container>
-            <small>*indicates required field</small>
+            <small>*означает необходимые поля</small>
           </v-card-text>
           <v-card-actions>
             <v-spacer />
@@ -82,8 +87,11 @@
         </v-card>
       </v-tab-item>
       <!--   Регистрация   -->
-      <v-tab-item :key="2" :value="'tab-2'">
-          <register/>
+      <v-tab-item
+        :key="2"
+        :value="'tab-2'"
+      >
+        <register />
       </v-tab-item>
     </v-tabs>
   </v-dialog>
