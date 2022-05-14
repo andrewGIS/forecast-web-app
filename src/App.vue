@@ -5,10 +5,13 @@
       color="primary"
       dark
     >
+      <!--Как можно получить из джанги данные -->
+      <!--Оценка риска конвективных ОЯ на территории Урала {{ value }}-->
       Оценка риска конвективных ОЯ на территории Урала
       <v-spacer />
       <order-notification/>
-      <auth/>
+      <auth v-if="!isLogin"/>
+      <logout v-if="isLogin"/>
     </v-app-bar>
 
     <v-main>
@@ -28,11 +31,14 @@ import Options from './components/Options'
 import Legend from './components/Legend'
 import Auth from "./components/Auth";
 import OrderNotification from "./components/OrderNotification";
+import Logout from "./components/Logout";
+import {mapState} from "vuex";
 
 export default {
   name: 'App',
 
   components: {
+    Logout,
     OrderNotification,
     Auth,
     Map,
@@ -42,7 +48,20 @@ export default {
   },
 
   data: () => ({
-    //
+    value: null
   }),
+  computed: {
+    ...mapState({
+      isLogin: state => state.auth.isLogin
+    })
+  },
+  mounted() {
+    //this.value = JSON.parse(document.getElementById('hello-data').textContent)
+  },
+
 };
 </script>
+
+<style>
+  html { overflow-y: auto }
+</style>

@@ -7,9 +7,10 @@
 </template>
 
 <script>
-import { LGeoJson } from "vue2-leaflet";
-import { mapGetters, mapState } from "vuex";
-export default {
+  import {LGeoJson} from "vue2-leaflet";
+  import {mapGetters, mapState} from "vuex";
+
+  export default {
   name: "RiskLayer",
   components: { LGeoJson },
   props: {
@@ -22,7 +23,7 @@ export default {
     data: null,
     tooltipFields: [
       {
-        field: "level_risk",
+        field: "level_code",
         alias: "Уровень риска"
       }
     ],
@@ -31,8 +32,7 @@ export default {
   }),
   computed: {
     ...mapState([
-      "selectedModel",
-      "SELECTED_EVENT_GROUP"
+      "selectedModel"
     ]),
     ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP"]),
     geoJSONData() {
@@ -93,8 +93,7 @@ export default {
   // },
   watch: {
     async geojsonURL() {
-      const result = await this.getGeoJSONData(this.geojsonURL);
-      this.data = result;
+      this.data = await this.getGeoJSONData(this.geojsonURL);
     },
     async SELECTED_EVENT_GROUP() {
       const baseURL = `${process.env.VUE_APP_API_BASE}/get_legend?`;
@@ -107,7 +106,7 @@ export default {
       let data = await fetch(url).then(r => r.json());
 
       this.style = feature => {
-        return this.findColor(data, feature.properties.level_risk);
+        return this.findColor(data, feature.properties.level_code);
       };
     }
   },

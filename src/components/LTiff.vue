@@ -62,6 +62,7 @@ export default {
     // Получилось подключить бибилотеку только через загрузку скрипта,
     // а зависимости как ссылки в html (geotiff, d3, chroma)
     const script = document.createElement("script");
+    //TODO как-то вынести в файлик, чтобы он подгружался
     script.src =
       "https://ihcantabria.github.io/Leaflet.CanvasLayer.Field/dist/leaflet.canvaslayer.field.js";
     script.async = true;
@@ -104,8 +105,9 @@ export default {
         // eslint-disable-next-line no-undef
         d3.request(
           //`${process.env.VUE_APP_API_BASE}/get_index?model=gfs&date=20210721&forecast_type=00&hour=03&index_name=cape_255-0`
-          this.url
+          //this.url
           //  'http://localhost:8000/get_tiff'
+            'http://localhost:8000/api/v1/get_raster'
         )
           .responseType("blob")
           .get(async (error, tiffData) => {
@@ -117,7 +119,6 @@ export default {
             //   const f = (v) => v !== 0
             //   this.$set(this.layer, "_inFilter", f)
             // }
-
             this.setIndexRange(this.rasterData.range);
 
             this.layer = L.canvasLayer

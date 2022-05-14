@@ -105,7 +105,14 @@ export default {
   }),
   computed: {
     ...mapGetters(["SELECTED_EVENT_GROUP"]),
-    ...mapState(["selectedModel", "selectedDisplayType", "indexActive", "colorRange", "indexRange", "riskColor", "indexColor"]),
+    ...mapState(["selectedModel",
+      "selectedDisplayType",
+      "indexActive",
+      "colorRange",
+      "indexRange",
+      "riskColor",
+      "indexColor"
+    ]),
     ...mapState(
       {
       isVisible: "isLegendVisible"
@@ -114,14 +121,18 @@ export default {
   watch:{
     async selectedDisplayType (newValue) {
       if (newValue ==='vector') {
-        this.legendVector = await this.getVectorLegend()
+        try{
+          this.legendVector = await this.getVectorLegend()
+        } catch  {
+            return
+        }
       }
       if (newValue === 'raster') {
         this.legendVector = []
       }
     },
-    async SELECTED_EVENT_GROUP () {
-      this.legendVector = await this.getVectorLegend()
+    SELECTED_EVENT_GROUP () {
+      this.legendVector = this.getVectorLegend()
     }
   },
   async mounted() {
@@ -141,9 +152,12 @@ export default {
         `group=${this.SELECTED_EVENT_GROUP}`
       ];
       const url = baseURL + params.join("&");
-
-      let data = await fetch(url).then(r => r.json());
-      return data
+      try{
+        const data = await fetch(url).then(r => r.json());
+        return data
+      } catch (e) {
+        return null
+      }
     }
   }
 };

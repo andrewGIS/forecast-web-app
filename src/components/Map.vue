@@ -1,5 +1,4 @@
 <template>
-  <!-- FIXME temp solution minZoom for correct display ltiff-->
   <l-map
     ref="map"
     :min-zoom="3"
@@ -113,3 +112,10 @@ export default {
 };
 
 </script>
+<style>
+   /* TODO придумать что то получше */
+   /* TODO посмотреть где это еще может повлиять убрать z-index где добавлено было из-за этого*/
+  .leaflet-pane {
+    z-index: 200 !important; /* Как у v-main*/
+  }
+</style>

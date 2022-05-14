@@ -6,13 +6,13 @@
           <v-row>
             <v-col cols="12">
               <v-text-field
-                v-model="login"
-                :error-messages="loginErrors"
+                v-model="username"
+                :error-messages="usernameErrors"
                 :counter="10"
                 label="Логин для входа"
                 required
-                @input="$v.login.$touch()"
-                @blur="$v.login.$touch()"
+                @input="$v.username.$touch()"
+                @blur="$v.username.$touch()"
               />
             </v-col>
           </v-row>
@@ -20,7 +20,7 @@
             v-model="password"
             :error-messages="passErrors"
             :type="showPass ? 'text' : 'password'"
-            :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+            :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
             label="Пароль"
             required
             @input="$v.password.$touch()"
@@ -65,24 +65,29 @@
     mixins: [validationMixin],
 
     validations: {
-      login: { required, maxLength: maxLength(10) },
+      username: { required, maxLength: maxLength(10) },
       password: {required},
       tLogin: {required}
     },
 
     data: () => ({
-      login: '',
+      username: '',
       password: '',
       tLogin: '',
       showPass: false
     }),
 
     computed: {
-      loginErrors () {
+      passErrors(){
         const errors = []
-        if (!this.$v.login.$dirty) return errors
-        !this.$v.login.maxLength && errors.push('Name must be at most 10 characters long')
-        !this.$v.login.required && errors.push('Name is required.')
+        if (!this.$v.password.$dirty) return errors
+        return errors
+        },
+      usernameErrors () {
+        const errors = []
+        if (!this.$v.username.$dirty) return errors
+        !this.$v.username.maxLength && errors.push('Name must be at most 10 characters long')
+        !this.$v.username.required && errors.push('Name is required.')
         return errors
       }
     },
@@ -92,7 +97,7 @@
         this.$v.$touch();
       },
       clear () {
-        this.login = '';
+        this.username = '';
         this.password = '';
         this.tLogin = '';
       },

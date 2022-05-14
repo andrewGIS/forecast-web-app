@@ -1,9 +1,9 @@
 <template>
-  <v-dialog
+  <v-dialog 
+    v-if="isLogin"
     v-model="dialog"
     max-width="600px"
     hide-overlay
-    v-if="flag"
   >
     <template #activator="{ on }">
       <v-btn
@@ -38,14 +38,6 @@
                 required
               />
             </v-col>
-            
-            <v-col cols="12">
-              <v-text-field 
-                v-model="telegramNick"
-                label="Ник в телеграме для отправки сообщений (@username)"
-                required
-              />
-            </v-col>
           </v-row>
         </v-container>
       </v-card-text>
@@ -61,6 +53,7 @@
         <v-btn
           color="blue darken-1"
           text
+          @click="requestNotification"
         >
           Запросить
         </v-btn>
@@ -70,28 +63,27 @@
 </template>
 
 <script>
+  import axios from "axios";
   import {mapState} from "vuex";
   
   export default {
+    name: "OrderNotification",
     data: ()=>({
       flag: false,
       dialog: false,
       X: null,
       Y: null,
-      telegramNick: null
     }),
-    name: "OrderNotification",
     computed: {
       ...mapState({
-        isAuth: state => state.auth.status
+        isLogin: state => state.auth.isLogin
       })
     },
-    watch:{
-      isAuth: function (newValue) {
-        if (newValue === 'success') {
-          this.flag = true
-        }
+    methods:{
+      requestNotification(){
+        axios.get(`${process.env.VUE_APP_API_BASE}/informer/order`)
       }
+      // TODO вынести все в отдельные сервисы
     }
   }
 </script>
