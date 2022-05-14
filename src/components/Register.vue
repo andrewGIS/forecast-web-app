@@ -9,7 +9,7 @@
                 v-model="username"
                 :error-messages="usernameErrors"
                 :counter="10"
-                label="Логин для входа"
+                label="Ваш логин для входа"
                 required
                 @input="$v.username.$touch()"
                 @blur="$v.username.$touch()"
@@ -29,9 +29,10 @@
           />
           <v-text-field
             v-model="tLogin"
+            :error-messages="tLoginErrors"
             label="Ник в телеграме"
-            @input="$v.tLgoin.$touch()"
-            @blur="$v.tLgoin.$touch()"
+            @input="$v.tLogin.$touch()"
+            @blur="$v.tLogin.$touch()"
           />
         </v-container>
       </v-form>
@@ -59,6 +60,8 @@
 <script>
   import { validationMixin } from 'vuelidate'
   import { required, maxLength } from 'vuelidate/lib/validators'
+  import { mapActions } from "vuex";
+
 
   export default {
     name: "Register",
@@ -66,8 +69,8 @@
 
     validations: {
       username: { required, maxLength: maxLength(10) },
-      password: {required},
-      tLogin: {required}
+      password: { required },
+      tLogin: { maxLength: maxLength(10) }
     },
 
     data: () => ({
@@ -89,12 +92,23 @@
         !this.$v.username.maxLength && errors.push('Name must be at most 10 characters long')
         !this.$v.username.required && errors.push('Name is required.')
         return errors
+      },
+      tLoginErrors () {
+        const errors = []
+        !this.$v.tLogin.maxLength && errors.push('Name must be at most 10 characters long')
+        return errors
       }
     },
 
     methods: {
+      ...mapActions({register: 'register'}),
       submit () {
         this.$v.$touch();
+        this.register({
+          username: this.username,
+          password: this.password,
+          telegram_login: this.tLogin,
+        })
       },
       clear () {
         this.username = '';
