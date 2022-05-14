@@ -1,4 +1,3 @@
-import axios from "axios";
 import authApi from "../../api/auth"
 
 export default {
@@ -28,36 +27,7 @@ export default {
     },
   },
   actions: {
-    //TODO may be transfer to service
-    makeAuthRequest({commit}, {baseUrl, data}) {
-      return new Promise((resolve, reject) => {
-        commit('auth_request')
-        fetch(baseUrl, {
-          body: JSON.stringify(data),
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        })
-          .then(r => r.json())
-          .then(resp => {
-            const token = resp.access
-            localStorage.setItem('token', token)
-            // TODO исправить почему-то без Bearer в начале нормально не парсилось на беке
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-            commit('auth_success', {token})
-            resolve(resp)
-          })
-          .catch(err => {
-            commit('auth_error')
-            localStorage.removeItem('token')
-            reject(err)
-          })
-      })
-    },
     login({commit}, data) {
-      //const baseUrl = `${process.env.VUE_APP_API_BASE}/auth/token`
-      //dispatch('makeAuthRequest', {baseUrl, data})
       commit('auth_request')
       authApi.login(data)
         .then(resp => {
@@ -65,15 +35,24 @@ export default {
           localStorage.setItem('token', token)
           commit('auth_success', {token})
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error)
           commit('auth_error')
           localStorage.removeItem('token')
         })
     },
-    register({dispatch}, data) {
-      const baseUrl = `${process.env.VUE_APP_API_BASE}/auth/register`
-      dispatch('makeAuthRequest', {baseUrl, data})
+    register({commit}, data) {
+      authApi.register(data)
+        .then(resp => resp.data)
+        .then(data => {
+          const token = data.access
+          localStorage.setItem('token', token)
+          commit('auth_success', {token})
+        })
+        .catch(error => {
+          console.log(error)
+          commit('auth_error')
+        })
     }
   }
 }
