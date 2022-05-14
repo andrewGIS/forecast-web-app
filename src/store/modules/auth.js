@@ -1,4 +1,5 @@
 import axios from "axios";
+import authApi from "../../api/auth"
 
 export default {
   state: {
@@ -54,9 +55,21 @@ export default {
           })
       })
     },
-    login({dispatch}, data) {
-      const baseUrl = `${process.env.VUE_APP_API_BASE}/auth/token`
-      dispatch('makeAuthRequest', {baseUrl, data})
+    login({commit}, data) {
+      //const baseUrl = `${process.env.VUE_APP_API_BASE}/auth/token`
+      //dispatch('makeAuthRequest', {baseUrl, data})
+      commit('auth_request')
+      authApi.login(data)
+        .then(resp => {
+          const token = resp.access
+          localStorage.setItem('token', token)
+          commit('auth_success', {token})
+        })
+        .catch((error) => {
+          console.log(error)
+          commit('auth_error')
+          localStorage.removeItem('token')
+        })
     },
     register({dispatch}, data) {
       const baseUrl = `${process.env.VUE_APP_API_BASE}/auth/register`
