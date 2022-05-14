@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "build-drf": "vue-cli-service build && docker build -t web_app_drf:latest . ",
     "build-docker": "vue-cli-service build && docker build -t forecast_frontend:latest . && docker save --output D://Work//_new_features//forecast//web//forecast-frontend.tar forecast_frontend:latest"
   },
   "dependencies": {
