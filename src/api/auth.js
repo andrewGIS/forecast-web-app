@@ -1,16 +1,8 @@
-import client from './index'
-import axios from "axios";
+import client, { anonClient }  from './index'
 
 export default {
-  // TODO унифицировать с общим клиентом
   register(data){
-    return axios.post('auth/register', data, {
-      baseURL: process.env.VUE_APP_API_BASE,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      withCredentials: false,
-    })
+    return anonClient.post('auth/register', data)
   },
   login(data) {
     return client.post('auth/token', data)

@@ -6,6 +6,13 @@ import axios from 'axios'
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
+export const anonClient = axios.create({
+  baseURL: process.env.VUE_APP_API_BASE,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
 const client = axios.create({
   baseURL: process.env.VUE_APP_API_BASE,
   headers: {

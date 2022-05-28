@@ -30,6 +30,7 @@ export default {
     login({commit}, data) {
       commit('auth_request')
       authApi.login(data)
+        .then(resp => resp.data)
         .then(resp => {
           const token = resp.access
           localStorage.setItem('token', token)

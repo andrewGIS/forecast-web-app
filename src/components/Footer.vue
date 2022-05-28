@@ -133,6 +133,7 @@
 <script>
 import { mapMutations, mapState } from "vuex";
 import {formatAsUTCDate} from '../utils/utils';
+import forecastApi from "../api/forecast"
 
 export default {
   data: () => ({
@@ -140,8 +141,8 @@ export default {
     selectedHour: 3,
     selectedHourLabel: "03:00", // для маленьких дисплеев
     // eslint-disable-next-line
-    selectedDate1: formatAsUTCDate(new Date(),'-'),
-    selectedDate: '2021-05-15',
+    selectedDate: formatAsUTCDate(new Date(),'-'),
+    //selectedDate: '2022-04-14',
     availableDates: [] // Даты для которых есть прогноз
   }),
   computed: {
@@ -158,14 +159,12 @@ export default {
     }
   },
   async mounted() {
-    const baseURL = `${process.env.VUE_APP_API_BASE}/get_dates?`;
-      const params = [
-        `model=${this.selectedModel}`,
-      ]
-    const url = baseURL + params.join("&");
-    let response = await fetch(url);
-    let dates = await response.json();
-    this.availableDates = dates
+    forecastApi.dates(this.selectedModel)
+        .then(response => this.availableDates = response.data)
+        .catch(error => {
+          console.log(error);
+          this.availableDates = [];
+        })
   },
   methods: {
     ...mapMutations({
