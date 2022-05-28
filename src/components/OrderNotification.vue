@@ -63,8 +63,8 @@
 </template>
 
 <script>
-  import axios from "axios";
   import {mapState} from "vuex";
+  import notificationApi from "../api/notification";
   
   export default {
     name: "OrderNotification",
@@ -81,9 +81,8 @@
     },
     methods:{
       requestNotification(){
-        axios.get(`${process.env.VUE_APP_API_BASE}/informer/order`)
+        notificationApi.order({x: this.X, y: this.Y})
       }
-      // TODO вынести все в отдельные сервисы
     }
   }
 </script>
