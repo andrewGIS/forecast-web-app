@@ -28,6 +28,20 @@
             @click:append="showPass = !showPass"
           />
           <v-text-field
+            v-model="firstName"
+            :error-messages="firstNameErrors"
+            label="Имя"
+            @input="$v.firstName.$touch()"
+            @blur="$v.firstName.$touch()"
+          />
+          <v-text-field
+            v-model="lastName"
+            :error-messages="lastNameErrors"
+            label="Фамилия"
+            @input="$v.lastName.$touch()"
+            @blur="$v.lastName.$touch()"
+          />
+          <v-text-field
             v-model="tLogin"
             :error-messages="tLoginErrors"
             label="Ник в телеграме"
@@ -70,14 +84,18 @@
     validations: {
       username: { required, maxLength: maxLength(10) },
       password: { required },
-      tLogin: { maxLength: maxLength(10) }
+      tLogin: { maxLength: maxLength(10), required },
+      firstName: { required },
+      lastName: { required },
     },
 
     data: () => ({
       username: '',
       password: '',
       tLogin: '',
-      showPass: false
+      showPass: false,
+      firstName: '',
+      lastName: ''
     }),
 
     computed: {
@@ -97,7 +115,17 @@
         const errors = []
         !this.$v.tLogin.maxLength && errors.push('Name must be at most 10 characters long')
         return errors
-      }
+      },
+      firstNameErrors () {
+        const errors = []
+        if (!this.$v.firstName.$dirty) return errors
+        return !this.$v.firstName.required && errors.push('First name is required.')
+      },
+      lastNameErrors () {
+        const errors = []
+        if (!this.$v.lastName.$dirty) return errors
+        return !this.$v.lastName.required && errors.push('Last name is required.')
+      },
     },
 
     methods: {
@@ -108,12 +136,16 @@
           username: this.username,
           password: this.password,
           telegram_login: this.tLogin,
+          first_name: this.firstName,
+          last_name: this.lastName,
         })
       },
       clear () {
         this.username = '';
         this.password = '';
         this.tLogin = '';
+        this.firstName = '';
+        this.lastName = '';
       },
     },
   }
