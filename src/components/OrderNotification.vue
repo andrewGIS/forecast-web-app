@@ -25,6 +25,13 @@
           <v-row>
             <v-col cols="12">
               <v-text-field
+                  v-model="pointName"
+                  label="Название точки "
+              />
+            </v-col>
+
+            <v-col cols="12">
+              <v-text-field
                 v-model="X"
                 label="Долгота (X) 59.59"
                 required
@@ -73,6 +80,7 @@
       dialog: false,
       X: null,
       Y: null,
+      pointName: null
     }),
     computed: {
       ...mapState({
@@ -81,7 +89,7 @@
     },
     methods:{
       requestNotification(){
-        notificationApi.order({x: this.X, y: this.Y})
+        notificationApi.order({x: this.X, y: this.Y, name: this.pointName})
       }
     }
   }
