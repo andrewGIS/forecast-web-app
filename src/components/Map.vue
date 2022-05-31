@@ -2,10 +2,12 @@
   <l-map
     ref="map"
     :min-zoom="3"
+    :center="center"
+    @mousemove="onMouseMove"
   >
     <l-marker 
-      v-if="postitonLatLng" 
-      :lat-lng="postitonLatLng"
+      v-if="userPosition"
+      :lat-lng="userPosition"
     >
       <l-popup>Ваша геопозиция</l-popup>
     </l-marker>
@@ -28,11 +30,18 @@
       :info-popup="true"
       :type-raster="'not-index'"
     />
+    <l-control
+      v-if="mousePosition"
+      position="bottomleft"
+      class="map__mouse_control_info text-caption"
+      v-html="mousePosition"
+    >
+    </l-control>
   </l-map>
 </template>
 
 <script>
-import { LMap, LMarker, LTileLayer, LPopup } from "vue2-leaflet";
+import { LMap, LMarker, LTileLayer, LPopup, LControl } from "vue2-leaflet";
 // import Legend from './Legend.vue'
 // import DatePicker from './DatePicker.vue'
 //import Alert from "./Alert.vue";
@@ -63,13 +72,16 @@ export default {
     RiskLayer,
     LTiff,
     LMarker,
-    LPopup
+    LPopup,
+    LControl
   },
 
   data: () => ({
     osmURL: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     map: null,
-    postitonLatLng: null
+    userPosition: null,
+    center: [59, 58],
+    mousePosition: null,
   }),
   computed: {
     ...mapState(["selectedModel","selectedIndex","indexActive", "selectedDisplayType"]),
@@ -106,7 +118,12 @@ export default {
   methods:{
     geoSuccess(e) {
       this.$refs.map.mapObject.setView(latLng(e.coords.latitude, e.coords.longitude), 5);
-      this.postitonLatLng = latLng(e.coords.latitude, e.coords.longitude);
+      this.userPosition = latLng(e.coords.latitude, e.coords.longitude);
+    },
+    onMouseMove(e) {
+      this.mousePosition =
+          `<b>Долгота</b> - ${e.latlng.lng.toPrecision(6)},
+           <b>Широта</b> - ${e.latlng.lat.toPrecision(6)}`;
     }
   }
 };
@@ -118,4 +135,10 @@ export default {
   .leaflet-pane {
     z-index: 200 !important; /* Как у v-main*/
   }
+   .map__mouse_control_info {
+     background: white;
+     padding-left: 1px;
+     margin-left: 0px;
+     margin-bottom: 0px;
+   }
 </style>
