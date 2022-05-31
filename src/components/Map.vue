@@ -138,7 +138,7 @@ export default {
    .map__mouse_control_info {
      background: white;
      padding-left: 1px;
-     margin-left: 0px;
-     margin-bottom: 0px;
+     margin-left: 0px; !important;
+     margin-bottom: 0px; !important;
    }
 </style>
