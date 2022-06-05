@@ -35,8 +35,7 @@
       position="bottomleft"
       class="map__mouse_control_info text-caption"
       v-html="mousePosition"
-    >
-    </l-control>
+    />
   </l-map>
 </template>
 
@@ -138,7 +137,7 @@ export default {
    .map__mouse_control_info {
      background: white;
      padding-left: 1px;
-     margin-left: 0px; !important;
-     margin-bottom: 0px; !important;
+     margin-left: 0px !important;
+     margin-bottom: 0px !important;
    }
 </style>
