@@ -159,7 +159,7 @@ export default {
     }
   },
   async mounted() {
-    forecastApi.dates(this.selectedModel)
+    await forecastApi.dates(this.selectedModel)
         .then(response => this.availableDates = response.data)
         .catch(error => {
           console.log(error);
