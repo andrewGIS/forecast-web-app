@@ -199,6 +199,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import forecastApi from "@/api/forecast";
 
 export default {
   name: "Options",
@@ -270,9 +271,9 @@ export default {
       this.getIndexes();
     }
   },
-  mounted() {
-    this.getGroups();
+  async mounted() {
     this.getModels();
+    this.getGroups();
     this.getIndexes();
   },
   methods: {
@@ -286,8 +287,8 @@ export default {
       setDisplayType: "SET_SELECTED_DISPLAY_TYPE"
     }),
     getModels() {
-      fetch(`${process.env.VUE_APP_API_BASE}/models`)
-        .then(data => data.json())
+      forecastApi.models()
+        .then(data => data.data)
         .then(res => {
           this.models = res.models;
           this.setModel(res.models[0]);
@@ -298,10 +299,8 @@ export default {
         });
     },
     getGroups() {
-      fetch(
-        `${process.env.VUE_APP_API_BASE}/event_groups?model=${this.selectedModel}`
-      )
-        .then(data => data.json())
+      forecastApi.eventGroups(this.selectedModel)
+        .then(data => data.data)
         .then(res => {
           this.eventGroups = res.groups;
           this.setSelectedEvent(res.groups[0]);
@@ -312,10 +311,8 @@ export default {
         });
     },
     getIndexes() {
-      fetch(
-        `${process.env.VUE_APP_API_BASE}/indexes?model=${this.selectedModel}`
-      )
-        .then(data => data.json())
+      forecastApi.indexes(this.selectedModel)
+        .then(data => data.data)
         .then(res => {
           this.indexList = res.indexes;
           this.setSelectedIndex(res.indexes[0]);
