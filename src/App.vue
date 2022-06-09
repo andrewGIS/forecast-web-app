@@ -9,9 +9,9 @@
       <!--Оценка риска конвективных ОЯ на территории Урала {{ value }}-->
       Оценка риска конвективных ОЯ на территории Урала
       <v-spacer />
-      <order-notification/>
-      <auth v-if="!isLogin"/>
-      <logout v-if="isLogin"/>
+      <order-notification v-if="isLogin" />
+      <auth v-if="!isLogin" />
+      <logout v-if="isLogin" />
     </v-app-bar>
 
     <v-main>

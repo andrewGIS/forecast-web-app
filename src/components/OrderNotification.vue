@@ -25,8 +25,8 @@
           <v-row>
             <v-col cols="12">
               <v-text-field
-                  v-model="pointName"
-                  label="Название точки "
+                v-model="pointName"
+                label="Название точки "
               />
             </v-col>
 
@@ -90,6 +90,7 @@
     methods:{
       requestNotification(){
         notificationApi.order({x: this.X, y: this.Y, name: this.pointName})
+            .then(() => this.dialog = false)
       }
     }
   }
