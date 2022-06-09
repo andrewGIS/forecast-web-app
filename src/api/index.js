@@ -1,8 +1,7 @@
 import axios from 'axios'
-//import store from '../store'
-// TODO разобраться с авторизованными запросами и нет
+import store from '../store'
 // TODO все запросы сделать через клиента
-
+// TODO нужен ли CSRF
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
@@ -21,16 +20,14 @@ const client = axios.create({
   withCredentials: true,
 })
 
-client.interceptors.response.use(null, (error) => {
+client.interceptors.response.use(null, error => {
   if (
-    error.response?.config & (error.response?.status === 401) ||
+    error.response?.status === 401 ||
     error.response?.status === 403
   ) {
-    //store.dispatch('auth/logout')
-    return error.response
+    store.commit('logout')
+    return Promise.reject(error)
   }
-
-  return Promise.reject(error)
 })
 
 client.interceptors.request.use(

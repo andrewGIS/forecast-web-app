@@ -51,6 +51,8 @@ import {latLng} from "leaflet";
 
 import { Icon } from 'leaflet';
 
+import {mapActions} from 'vuex';
+
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -113,8 +115,10 @@ export default {
   },
   mounted(){
     navigator.geolocation.getCurrentPosition(this.geoSuccess, ()=>{})
+    this.updateToken();
   },
   methods:{
+    ...mapActions(['updateToken']),
     geoSuccess(e) {
       this.$refs.map.mapObject.setView(latLng(e.coords.latitude, e.coords.longitude), 5);
       this.userPosition = latLng(e.coords.latitude, e.coords.longitude);

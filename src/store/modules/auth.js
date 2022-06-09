@@ -4,26 +4,26 @@ export default {
   state: {
     status: 'not success',
     token: localStorage.getItem('token') || '',
-    isLogin: !!(localStorage.getItem('token') || null)
+    isLogin: false
   },
-  //getters: {},
   mutations: {
     auth_request(state) {
       state.status = 'loading';
     },
-    auth_success(state, payload) {
+    auth_success(state) {
       state.isLogin = true;
       state.status = 'success';
-      state.token = payload.token;
     },
     auth_error(state) {
       state.status = 'error'
+      state.isLogin = true;
     },
     logout(state) {
       state.isLogin = false;
       state.status = 'unauthorized'
       state.token = ''
       localStorage.removeItem('token')
+      localStorage.removeItem('refresh')
     },
   },
   actions: {
@@ -31,10 +31,10 @@ export default {
       commit('auth_request')
       authApi.login(data)
         .then(resp => resp.data)
-        .then(resp => {
-          const token = resp.access
-          localStorage.setItem('token', token)
-          commit('auth_success', {token})
+        .then(({ access, refresh }) => {
+          localStorage.setItem('token', access)
+          localStorage.setItem('refresh', refresh)
+          commit('auth_success')
         })
         .catch(error => {
           console.log(error)
@@ -45,15 +45,29 @@ export default {
     register({commit}, data) {
       authApi.register(data)
         .then(resp => resp.data)
-        .then(data => {
-          const token = data.access
-          localStorage.setItem('token', token)
-          commit('auth_success', {token})
+        .then(({access, refresh}) => {
+          localStorage.setItem('token', access)
+          localStorage.setItem('refresh', refresh)
+          commit('auth_success')
         })
         .catch(error => {
           console.log(error)
           commit('auth_error')
         })
+    },
+    updateToken({commit}) {
+      const refreshToken = localStorage.getItem('refresh')
+      if (!refreshToken) {
+        commit('logout')
+        return
+      }
+      authApi.refresh(refreshToken)
+        .then(resp => resp.data)
+        .then(({ access }) => {
+          localStorage.setItem('token', access)
+          commit('auth_success')
+        })
+        .catch(error => console.log(error))
     }
   }
 }
