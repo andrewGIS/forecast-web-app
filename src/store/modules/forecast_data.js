@@ -1,4 +1,4 @@
-import {formatAsUTCDate} from "../../utils/utils";
+import { formatAsUTCDate } from "@/utils/utils";
 
 export const mapDataModule = {
   state: {
@@ -19,55 +19,55 @@ export const mapDataModule = {
     forecastHours: [
       {
         value: 0,
-        label: "00:00"
+        label: "00:00",
       },
       {
         value: 3,
-        label: "03:00"
+        label: "03:00",
       },
       {
         value: 6,
-        label: "06:00"
+        label: "06:00",
       },
       {
         value: 9,
-        label: "09:00"
+        label: "09:00",
       },
       {
         value: 12,
-        label: "12:00"
+        label: "12:00",
       },
       {
         value: 15,
-        label: "15:00"
+        label: "15:00",
       },
       {
         value: 18,
-        label: "18:00"
+        label: "18:00",
       },
       {
         value: 21,
-        label: "21:00"
+        label: "21:00",
       },
       {
         value: 24,
-        label: "24:00"
-      }
-    ]
+        label: "24:00",
+      },
+    ],
   },
   getters: {
     // Выбранный час в UTС
-    SELECTED_HOUR: state => {
+    SELECTED_HOUR: (state) => {
       if (!state.selectedDate) {
         return "";
       }
 
-      let value = state.selectedDate.getUTCHours();
+      const value = state.selectedDate.getUTCHours();
       // Считаем наиболее близкий прогноз с учетом смещения от UTC
       // учитываем что у нас прогноз с разрезом 3 часа, хотя это неважно,
       // мы берем из тех, которые указаны в forecastHours
-      const hours = state.forecastHours.map(h => h.value);
-      const diffs = hours.map(h => Math.abs(value - h));
+      const hours = state.forecastHours.map((h) => h.value);
+      const diffs = hours.map((h) => Math.abs(value - h));
       let hour = hours[diffs.indexOf(Math.min(...diffs))];
       if (hour === 0) {
         return "24";
@@ -85,14 +85,18 @@ export const mapDataModule = {
       // но выбранная в опциях дата еще в текущем дне.
       //Например часовой пояс Екатеринбург, пытаемся получить прогноз по местному времени
       // на 6 утра, в UTC это час, ближайший прогноз 24 часа предыдущего дня
-      if (getters.SELECTED_HOUR === '24'){
-        return formatAsUTCDate(new Date(state.selectedDate.setUTCDate(state.selectedDate.getUTCDate()-1)))
+      if (getters.SELECTED_HOUR === "24") {
+        return formatAsUTCDate(
+          new Date(
+            state.selectedDate.setUTCDate(state.selectedDate.getUTCDate() - 1)
+          )
+        );
       }
 
       return formatAsUTCDate(state.selectedDate); //sample 20150722
     },
-    SELECTED_EVENT_GROUP: state =>
-      state.selectedEvent ? state.selectedEvent.name : null
+    SELECTED_EVENT_GROUP: (state) =>
+      state.selectedEvent ? state.selectedEvent.name : null,
   },
   mutations: {
     SET_CONFIG_VISIBILITY(state, payload) {
@@ -121,6 +125,6 @@ export const mapDataModule = {
     },
     SET_INDEX_RANGE(state, payload) {
       state.indexRange = payload;
-    }
+    },
   },
-}
+};

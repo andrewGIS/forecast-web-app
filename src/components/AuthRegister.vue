@@ -119,12 +119,14 @@
       firstNameErrors () {
         const errors = []
         if (!this.$v.firstName.$dirty) return errors
-        return !this.$v.firstName.required && errors.push('First name is required.')
+        !this.$v.firstName.required && errors.push('First name is required.')
+        return errors
       },
       lastNameErrors () {
         const errors = []
         if (!this.$v.lastName.$dirty) return errors
-        return !this.$v.lastName.required && errors.push('Last name is required.')
+        !this.$v.lastName.required && errors.push('Last name is required.')
+        return errors
       },
     },
 

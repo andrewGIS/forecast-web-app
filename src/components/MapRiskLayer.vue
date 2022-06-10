@@ -9,6 +9,7 @@
 <script>
   import {LGeoJson} from "vue2-leaflet";
   import {mapGetters, mapState} from "vuex";
+  import forecastApi from "@/api/forecast";
 
   export default {
   name: "RiskLayer",
@@ -76,55 +77,52 @@
         layer.bindTooltip(this.tooltipFields.reduce(tooltipContent, ""));
       };
     },
-    geojsonURL() {
-      const baseURL = `${process.env.VUE_APP_API_BASE}/get_forecast?`;
-      const params = [
+    selectedParams() {
+      const selectedParams = [
         `model=${this.selectedModel}`,
         `date=${this.SELECTED_DATE}`,
         `hour=${this.SELECTED_HOUR}`,
         `group=${this.SELECTED_EVENT_GROUP}`,
-        "datatype=vector"
       ];
-      return baseURL + params.join("&");
+      return selectedParams.join("&");
     }
   },
-  // mounted (){
-  //     this.getGeoJSONData()
-  // },
   watch: {
-    async geojsonURL() {
+    async selectedParams() {
       this.data = await this.getGeoJSONData(this.geojsonURL);
     },
     async SELECTED_EVENT_GROUP() {
-      const baseURL = `${process.env.VUE_APP_API_BASE}/get_legend?`;
-      const params = [
-        `model=${this.selectedModel}`,
-        `group=${this.SELECTED_EVENT_GROUP}`
-      ];
-      const url = baseURL + params.join("&");
-
-      let data = await fetch(url).then(r => r.json());
-
-      this.style = feature => {
-        return this.findColor(data, feature.properties.level_code);
-      };
+      await forecastApi.legend({
+        model: this.selectedModel,
+        group: this.SELECTED_EVENT_GROUP,
+      })
+          .then(r => {
+                this.style = feature => {
+                     return this.findColor(r.data, feature.properties.level_code);
+                };
+      });
     }
   },
   methods: {
-    async getGeoJSONData(url) {
-      try {
-        let response = await fetch(url);
-        let result = await response.json();
-        if (!response.ok) {
-          return null;
-        }
-        this.error_get_data = false;
-        return result;
-      } catch (error) {
-        console.log(error);
-        this.error_get_data = true;
-        return null;
-      }
+    async getGeoJSONData() {
+      const params = {
+          "model":this.selectedModel,
+          "date": this.SELECTED_DATE,
+          "hour":this.SELECTED_HOUR,
+          "group": this.SELECTED_EVENT_GROUP,
+          "datatype": "vector",
+      };
+      const data = await forecastApi.forecast(params)
+          .then(r => {
+            this.error_get_data = false;
+            return r.data;
+          })
+          .catch(error => {
+            console.log(error);
+            this.error_get_data = true;
+            return null
+          })
+      return data
     },
     findColor(data, code) {
       const { color } = data.find(({ levelCode }) => levelCode === code);

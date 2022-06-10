@@ -10,49 +10,50 @@ export default {
     auth_request(state) {
       state.status = 'loading';
     },
-    auth_success(state) {
+    auth_success(state, {access, refresh}) {
       state.isLogin = true;
       state.status = 'success';
+      localStorage.setItem('token', access)
+      localStorage.setItem('refresh', refresh)
     },
     auth_error(state) {
       state.status = 'error'
-      state.isLogin = true;
+      state.isLogin = false;
     },
     logout(state) {
       state.isLogin = false;
       state.status = 'unauthorized'
       state.token = ''
-      localStorage.removeItem('token')
-      localStorage.removeItem('refresh')
     },
+    deleteToken() {
+      localStorage.removeItem('token')
+      localStorage.removeItem('refresh')    }
   },
   actions: {
+    // TODO отрефакторить чтобы then не повторялись
     login({commit}, data) {
       commit('auth_request')
       authApi.login(data)
         .then(resp => resp.data)
         .then(({ access, refresh }) => {
-          localStorage.setItem('token', access)
-          localStorage.setItem('refresh', refresh)
-          commit('auth_success')
+          commit('auth_success', { access, refresh })
         })
         .catch(error => {
           console.log(error)
           commit('auth_error')
-          localStorage.removeItem('token')
+          commit('deleteToken')
         })
     },
     register({commit}, data) {
       authApi.register(data)
         .then(resp => resp.data)
         .then(({access, refresh}) => {
-          localStorage.setItem('token', access)
-          localStorage.setItem('refresh', refresh)
-          commit('auth_success')
+          commit('auth_success', {access, refresh })
         })
         .catch(error => {
           console.log(error)
           commit('auth_error')
+          commit('deleteToken')
         })
     },
     updateToken({commit}) {
@@ -67,7 +68,10 @@ export default {
           localStorage.setItem('token', access)
           commit('auth_success')
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+          commit('auth_error')
+          console.log(error)
+        })
     }
   }
 }

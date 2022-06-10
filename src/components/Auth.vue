@@ -4,13 +4,8 @@
     max-width="600px"
     hide-overlay
   >
-    <template
-      #activator="{ on }" 
-    >
-      <v-btn
-        icon
-        v-on="on"
-      >
+    <template #activator="{ on }">
+      <v-btn icon v-on="on">
         <v-icon>
           mdi-login
         </v-icon>
@@ -19,7 +14,6 @@
 
     <v-tabs>
       <v-tabs-slider />
-      <!--   Вкладки   -->
       <!--   Вход   -->
       <v-tab
         :key="1"
@@ -35,56 +29,23 @@
         Регистрация
       </v-tab>
 
+      <v-spacer />
+      <v-btn
+        icon
+        class="mr-2 mt-2"
+        @click="dialog=false"
+      >
+        <v-icon>
+          mdi-close
+        </v-icon>
+      </v-btn>
+
       <!--   Вход   -->
-      <!--   Выделить в отедльные компоненты  -->
       <v-tab-item
         :key="1"
         :value="'tab-1'"
       >
-        <v-card>
-          <!--          <v-card-title>-->
-          <!--            <span class="text-h5">Войти</span>-->
-          <!--          </v-card-title>-->
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="username"
-                    label="Логин*"
-                    required
-                  />
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="password"
-                    label="Пароль*"
-                    type="password"
-                    required
-                  />
-                </v-col>
-              </v-row>
-            </v-container>
-            <small>*означает необходимые поля</small>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer />
-            <v-btn
-              color="blue darken-1"
-              text
-              @click="dialog = false"
-            >
-              Закрыть
-            </v-btn>
-            <v-btn
-              color="blue darken-1"
-              text
-              @click="login({username, password})"
-            >
-              Войти
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+        <login />
       </v-tab-item>
       <!--   Регистрация   -->
       <v-tab-item
@@ -94,20 +55,20 @@
         <register />
       </v-tab-item>
     </v-tabs>
+    <v-spacer />
   </v-dialog>
 </template>
 
 <script>
-  import {mapActions, mapState} from "vuex"
-  import Register from "./Register"
+  import Register from "@/components/AuthRegister"
+  import Login from "@/components/AuthLogin";
+  import {mapState} from "vuex";
 
   export default {
     name: "Auth",
-    components: {Register},
-    data: ()=>({
-      dialog: false,
-      username: null,
-      password: null
+    components: {Login, Register},
+    data: () => ({
+      dialog: false
     }),
     computed: {
       ...mapState({
@@ -121,9 +82,6 @@
         }
       }
     },
-    methods:{
-      ...mapActions({login: 'login'})
-    }
   }
 </script>
 

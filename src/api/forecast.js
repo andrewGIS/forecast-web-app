@@ -13,4 +13,10 @@ export default {
   eventGroups(modelName) {
     return anonClient.get('event_groups/', { params: { model:modelName } })
   },
+  legend(data) {
+    return anonClient.get('get_legend/', {params:data})
+  },
+  forecast(data) {
+    return anonClient.get('get_forecast/', {params: data })
+  }
 }

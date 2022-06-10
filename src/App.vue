@@ -7,17 +7,15 @@
     >
       <!--Как можно получить из джанги данные -->
       <!--Оценка риска конвективных ОЯ на территории Урала {{ value }}-->
-      Оценка риска конвективных ОЯ на территории Урала
+      <v-toolbar-title class=".d-none .d-sm-flex">
+        ОЦЕНКА РИСКА КОНВЕКТИВНЫХ ОЯ НА ТЕРРИТОРИИ УРАЛА
+      </v-toolbar-title>
       <v-spacer />
-      <order-notification v-if="isLogin" />
-      <auth v-if="!isLogin" />
-      <logout v-if="isLogin" />
+      <Controls />
     </v-app-bar>
 
     <v-main>
       <Map />
-      <Options />
-      <Legend />
     </v-main>
 
     <Footer />
@@ -26,39 +24,18 @@
 
 <script>
 import Map from './components/Map';
-import Footer from './components/Footer'
-import Options from './components/Options'
-import Legend from './components/Legend'
-import Auth from "./components/Auth";
-import OrderNotification from "./components/OrderNotification";
-import Logout from "./components/Logout";
-import {mapState} from "vuex";
+import Footer from './components/Footer';
+import Controls from "@/components/Controls";
 
 export default {
   name: 'App',
 
   components: {
-    Logout,
-    OrderNotification,
-    Auth,
     Map,
     Footer,
-    Options,
-    Legend
+    // Options,
+    Controls
   },
-
-  data: () => ({
-    value: null
-  }),
-  computed: {
-    ...mapState({
-      isLogin: state => state.auth.isLogin
-    })
-  },
-  mounted() {
-    //this.value = JSON.parse(document.getElementById('hello-data').textContent)
-  },
-
 };
 </script>
 

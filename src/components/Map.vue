@@ -41,10 +41,7 @@
 
 <script>
 import { LMap, LMarker, LTileLayer, LPopup, LControl } from "vue2-leaflet";
-// import Legend from './Legend.vue'
-// import DatePicker from './DatePicker.vue'
-//import Alert from "./Alert.vue";
-import RiskLayer from "./RiskLayer";
+import RiskLayer from "./MapRiskLayer";
 import LTiff from "./LTiff.vue";
 import { mapState, mapGetters } from "vuex";
 import {latLng} from "leaflet";
@@ -65,11 +62,6 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    // Legend,
-    // Options,
-    // DatePicker,
-    // Alert,
-    // eslint-disable-next-line vue/no-unused-components
     RiskLayer,
     LTiff,
     LMarker,
@@ -88,6 +80,7 @@ export default {
     ...mapState(["selectedModel","selectedIndex","indexActive", "selectedDisplayType"]),
     ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP"]),
     rasterURL() {
+      // TODO выпилить
       const baseURL = `${process.env.VUE_APP_API_BASE}/get_forecast?`;
       const params = [
         `model=${this.selectedModel}`,
@@ -100,6 +93,7 @@ export default {
     },
     indexURL () {
       //`http://localhost:5000/api/v1/get_index?model=icon&date=20210721&forecast_type=00&hour=03&index_name=dls`
+      // TODO выпилить
       const baseURL = `${process.env.VUE_APP_API_BASE}/get_index?`;
 
       const params = [

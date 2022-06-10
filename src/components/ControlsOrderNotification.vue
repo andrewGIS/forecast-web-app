@@ -89,7 +89,7 @@
     },
     methods:{
       requestNotification(){
-        notificationApi.order({x: this.X, y: this.Y, name: this.pointName})
+        notificationApi.order({X: this.X, Y: this.Y, name: this.pointName})
             .then(() => this.dialog = false)
       }
     }
