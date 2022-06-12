@@ -1,7 +1,10 @@
-import client from './index'
+import client from "./index";
 
-export default  {
+export default {
   order(data) {
-    return client.post('informer/order', data)
-  }
-}
+    return client.post("informer/order", data);
+  },
+  listPoints() {
+    return client.get("informer/list_points");
+  },
+};

@@ -13,10 +13,11 @@
       <v-spacer />
       <Controls />
     </v-app-bar>
-
     <v-main>
       <Map />
     </v-main>
+    <list-points />
+
 
     <Footer />
   </v-app>
@@ -26,14 +27,16 @@
 import Map from './components/Map';
 import Footer from './components/Footer';
 import Controls from "@/components/Controls";
+import ListPoints from "@/components/ListPoints";
+
+
 
 export default {
   name: 'App',
-
   components: {
+    ListPoints,
     Map,
     Footer,
-    // Options,
     Controls
   },
 };

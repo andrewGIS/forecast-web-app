@@ -54,7 +54,7 @@
         </v-slide-item>
       </v-slide-group>
 
-      <div class="d-xs-flex d-sm-none ml-11">
+      <div class="d-xs-flex d-sm-none ml-1">
         <v-btn icon small @click="moveHour(-1)">
           <v-icon>
             mdi-skip-previous
@@ -131,7 +131,7 @@ export default {
 <style scoped>
 .v-tooltip__content {
   /*КОСТЫЫЫЛЬ чтобы не был прозрачным календарь*/
-  padding: 0px 0px;
+  padding: 0px;
   opacity: 1.0 !important
 }
 
