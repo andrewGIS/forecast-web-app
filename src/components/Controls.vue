@@ -1,10 +1,10 @@
 <!--TODO сделать верстку контролов на маленьком экране-->
 <template>
   <div class="d-inline-flex ">
-    <list-points v-if="isLogin" />
+    <list-points v-if="isLogin" title="Ваши точки оповещения" />
     <order-notification v-if="isLogin" />
-    <auth v-if="!isLogin" />
-    <logout v-if="isLogin" />
+    <auth v-if="!isLogin" title="Авторизация" />
+    <logout v-if="isLogin" title="Выйти" />
   </div>
 </template>
 

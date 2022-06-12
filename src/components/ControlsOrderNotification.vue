@@ -8,6 +8,7 @@
     <template #activator="{ on }">
       <v-btn
         icon
+        title="Добавить точку оповещения"
         v-on="on"
       >
         <v-icon>
