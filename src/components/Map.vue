@@ -12,7 +12,10 @@
       <l-popup>Ваша геопозиция</l-popup>
     </l-marker>
     <risk-layer :is-visible="selectedDisplayType === 'vector'" />
-    <l-tile-layer :url="osmURL" />
+    <info-points />
+    <l-tile-layer
+      :url="osmURL"
+    />
 
     <!-- <Legend/>
           <Options/>
@@ -49,6 +52,7 @@ import {latLng} from "leaflet";
 import { Icon } from 'leaflet';
 
 import {mapActions} from 'vuex';
+import InfoPoints from "@/components/MapInfoPoints";
 
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
@@ -60,6 +64,7 @@ Icon.Default.mergeOptions({
 export default {
   name: "Map",
   components: {
+    InfoPoints,
     LMap,
     LTileLayer,
     RiskLayer,

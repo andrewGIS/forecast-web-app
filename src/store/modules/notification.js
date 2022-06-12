@@ -4,6 +4,7 @@ export default {
   state: {
     infoPoints: [],
     listNotificationPointsActive: false,
+    selectedPoint: null,
   },
   mutations: {
     SET_POINTS(state, data) {
@@ -11,6 +12,9 @@ export default {
     },
     SET_INFO_POINTS_VISIBILITY(state, data) {
       state.listNotificationPointsActive = data;
+    },
+    SET_SELECTED_POINT(state, data) {
+      state.selectedPoint = data;
     },
   },
   actions: {

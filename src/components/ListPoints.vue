@@ -5,11 +5,12 @@
     :headers="headers"
     :items="properties"
     :options="dataTableOptions"
+    @click:row="selectRow"
   />
 </template>
 
 <script>
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 export default {
   data: () => ({
     isMobile: false,
@@ -54,9 +55,14 @@ export default {
     ...mapActions({
       getData: 'get_info_points'
     }),
+    ...mapMutations({
+      setSelectedPoint: 'SET_SELECTED_POINT'
+    }),
     onResize(){
-
       this.isMobile = window.innerWidth <= 600
+    },
+    selectRow(row) {
+      this.setSelectedPoint(row)
     }
   },
 }
