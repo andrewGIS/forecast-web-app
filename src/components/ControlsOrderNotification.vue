@@ -19,7 +19,7 @@
 
     <v-card>
       <v-card-title>
-        <span>Заказать оповещение для определенной точки (в радиусе 20 км)</span>
+        <span>Заказать оповещение для точки (в радиусе 20 км)</span>
       </v-card-title>
       <v-card-text>
         <v-container>

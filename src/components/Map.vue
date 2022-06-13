@@ -5,7 +5,7 @@
     :center="center"
     @mousemove="onMouseMove"
   >
-    <l-marker 
+    <l-marker
       v-if="userPosition"
       :lat-lng="userPosition"
     >
@@ -17,10 +17,6 @@
       :url="osmURL"
     />
 
-    <!-- <Legend/>
-          <Options/>
-          <date-picker/> -->
-    <!-- <Alert /> -->
     <l-tiff 
       :is-visible="indexActive"
       :url="indexURL" 
@@ -46,12 +42,9 @@
 import { LMap, LMarker, LTileLayer, LPopup, LControl } from "vue2-leaflet";
 import RiskLayer from "./MapRiskLayer";
 import LTiff from "./LTiff.vue";
-import { mapState, mapGetters } from "vuex";
-import {latLng} from "leaflet";
-
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { latLng } from "leaflet";
 import { Icon } from 'leaflet';
-
-import {mapActions} from 'vuex';
 import InfoPoints from "@/components/MapInfoPoints";
 
 delete Icon.Default.prototype._getIconUrl;
@@ -115,11 +108,16 @@ export default {
   mounted(){
     navigator.geolocation.getCurrentPosition(this.geoSuccess, ()=>{})
     this.updateToken();
+    this.$nextTick(()=>{
+      this.SET_MAP(this.$refs.map.mapObject) // work as expected
+      this.map = this.$refs.map.mapObject;
+    })
   },
   methods:{
+    ...mapMutations(['SET_MAP']),
     ...mapActions(['updateToken']),
     geoSuccess(e) {
-      this.$refs.map.mapObject.setView(latLng(e.coords.latitude, e.coords.longitude), 5);
+      this.map.setView(latLng(e.coords.latitude, e.coords.longitude), 5);
       this.userPosition = latLng(e.coords.latitude, e.coords.longitude);
     },
     onMouseMove(e) {

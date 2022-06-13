@@ -1,6 +1,6 @@
 <template>
   <v-data-table
-    v-if="isPointsActive"
+    v-if="isLogin && isPointsActive"
     color="white"
     :headers="headers"
     :items="properties"
@@ -17,8 +17,8 @@ export default {
     dialog: true,
     headers: [
       {text: 'ID', value: 'id'},
-      {text: 'Долгота', value: '0'},
-      {text: 'Широта', value: '1'},
+      {text: 'Долгота', value: 'X'},
+      {text: 'Широта', value: 'Y'},
       {text: 'Имя', value: 'name'},
     ],
   }),
@@ -34,12 +34,17 @@ export default {
         }
     },
     properties() {
-      return this.infoPoints.features?.map(({properties, geometry: {coordinates}}) => {
-        return {
-          ...coordinates,
-          ...properties
-        }
-      })
+      if (this.infoPoints) {
+        return this.infoPoints.features?.map(({properties, geometry: {coordinates}}) => {
+          return {
+            X:coordinates[0],
+            Y:coordinates[1],
+            ...properties
+          }
+        })
+      } else {
+        return []
+      }
     }
   },
   mounted() {

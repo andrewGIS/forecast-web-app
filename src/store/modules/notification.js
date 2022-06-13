@@ -2,7 +2,7 @@ import notificationApi from "@/api/notification";
 
 export default {
   state: {
-    infoPoints: [],
+    infoPoints: null,
     listNotificationPointsActive: false,
     selectedPoint: null,
   },
@@ -18,10 +18,19 @@ export default {
     },
   },
   actions: {
-    get_info_points({ commit }) {
-      notificationApi.listPoints().then(({ data }) => {
-        commit("SET_POINTS", data);
-      });
+    get_info_points({ state, commit }, force = false) {
+      if (force) {
+        notificationApi.listPoints().then(({ data }) => {
+          commit("SET_POINTS", data);
+        });
+        return;
+      }
+
+      if (!state.infoPoints) {
+        notificationApi.listPoints().then(({ data: features }) => {
+          commit("SET_POINTS", features);
+        });
+      }
     },
   },
 };

@@ -2,6 +2,7 @@ import { formatAsUTCDate } from "@/utils/utils";
 
 export const mapDataModule = {
   state: {
+    gMap: null,
     isConfigVisible: false,
     isLegendVisible: false,
     selectedDate: null,
@@ -125,6 +126,9 @@ export const mapDataModule = {
     },
     SET_INDEX_RANGE(state, payload) {
       state.indexRange = payload;
+    },
+    SET_MAP(state, payload) {
+      state.gMap = payload;
     },
   },
 };

@@ -1,30 +1,33 @@
 <template>
   <l-geo-json
     :geojson="geoJSONData"
-    :visible="isVisible"
+    :visible="isLogin && isVisible"
     :options="optionsGeoJSON"
+    :options-style="styleFunction"
   />
 </template>
 
 <script>
-import L from 'leaflet'
-import {LGeoJson} from "vue2-leaflet";
-import {mapState} from "vuex";
+import L, {latLng} from 'leaflet'
+import { LGeoJson } from "vue2-leaflet";
+import { mapState } from "vuex";
 
 export default {
   name: "InfoPoints",
   components: { LGeoJson },
-  data: () => ({
-    error_get_data: true,
-  }),
   computed: {
     ...mapState({
       data: state => state.notification.infoPoints,
-      isVisible: state => state.notification.listNotificationPointsActive
+      isVisible: state => state.notification.listNotificationPointsActive,
+      isLogin: state => state.auth.isLogin,
+      selectedPoint: state => state.notification.selectedPoint,
+      gMap: state => state.gMap
     }),
+    selectedPointId() {
+      return this.selectedPoint?.id
+    },
     geoJSONData() {
       if (this.isVisible && this.data) {
-        // return this.$store.getters.GET_FILTERED_GEOJSON;
         return this.data;
       } else {
         return [];
@@ -33,10 +36,11 @@ export default {
     optionsGeoJSON() {
       return {
         onEachFeature: this.onEachFeature,
-        pointToLayer: this.pointToLayer
+        pointToLayer: this.pointToLayer,
+        style: this.style
       };
     },
-    pointToLayer () {
+    pointToLayer() {
       return (feature, latlng) => {
         // console.log(feature)
         return L.circleMarker(latlng, {
@@ -50,7 +54,33 @@ export default {
         )
       }
     },
+    onEachFeature() {
+      return (feature, layer) => {
+          const tooltipContent =
+              "<div>" +
+              `Название точки : <b>${feature.properties.name}</b>` +
+              "<div>";
+          layer.bindPopup(tooltipContent)
+       }
+    },
+    styleFunction() {
+      const id = this.selectedPointId; // important! need to save id
+      return (feature) => {
+        if ( feature && feature.properties?.id === id) {
+          return {fillColor: '#000000'}
+        } else {
+          return {fillColor: '#ff7800'}
+        }
+      }
+    }
   },
+  watch: {
+    selectedPointId() {
+      if(this.selectedPoint.id){
+        this.gMap.setView(latLng([this.selectedPoint.Y, this.selectedPoint.X]), 7)
+      }
+    }
+  }
 };
 </script>
 

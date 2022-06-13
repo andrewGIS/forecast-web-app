@@ -14,7 +14,8 @@ export default {
   computed: {
     ...mapState({
       isLogin: state => state.auth.isLogin,
-      isListPointVisible: state => state.notification.listNotificationPointsActive
+      isListPointVisible: state => state.notification.listNotificationPointsActive,
+      gMap: state => state.gMap
     }),
   },
   methods:{
@@ -24,9 +25,14 @@ export default {
     ...mapMutations({
       toggleVisibility: 'SET_INFO_POINTS_VISIBILITY',
     }),
+    ...mapMutations(['SET_SELECTED_POINT']),
     onClick() {
       this.getData()
-      this.toggleVisibility(!this.isListPointVisible)
+      this.toggleVisibility(!this.isListPointVisible);
+      this.SET_SELECTED_POINT({});
+      setTimeout(() => {
+        this.gMap.invalidateSize();
+      }, 0)
     }
   }
 }
