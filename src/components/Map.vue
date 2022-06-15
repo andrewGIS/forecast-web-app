@@ -5,10 +5,7 @@
     :center="center"
     @mousemove="onMouseMove"
   >
-    <l-marker
-      v-if="userPosition"
-      :lat-lng="userPosition"
-    >
+    <l-marker v-if="userPosition" :lat-lng="userPosition">
       <l-popup>Ваша геопозиция</l-popup>
     </l-marker>
     <risk-layer :is-visible="selectedDisplayType === 'vector'" />

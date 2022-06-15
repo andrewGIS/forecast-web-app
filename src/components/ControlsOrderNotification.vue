@@ -4,6 +4,7 @@
     v-model="dialog"
     max-width="600px"
     hide-overlay
+    :style="{zIndex: 1003}"
   >
     <template #activator="{ on }">
       <v-btn
@@ -46,6 +47,14 @@
                 required
               />
             </v-col>
+
+            <v-col cols="12">
+              <v-text-field
+                v-model="shiftTime"
+                label="Смещение от UTC (часы)"
+                required
+              />
+            </v-col>
           </v-row>
         </v-container>
       </v-card-text>
@@ -81,17 +90,27 @@
       dialog: false,
       X: null,
       Y: null,
-      pointName: null
+      pointName: null,
+      shiftTime: null // смещение от UTC в часах
     }),
     computed: {
       ...mapState({
         isLogin: state => state.auth.isLogin
       })
     },
+    watch:{
+      dialog(){
+        this.shiftTime = new Date().getTimezoneOffset() / 60
+      }
+    },
     methods:{
       requestNotification(){
-        notificationApi.order({X: this.X, Y: this.Y, name: this.pointName})
-            .then(() => this.dialog = false)
+        notificationApi.order({
+          X: this.X,
+          Y: this.Y,
+          name: this.pointName,
+          pointFromUTCOffset:this.shiftTime
+        }).then(() => this.dialog = false)
       }
     }
   }
