@@ -1,16 +1,19 @@
 <template>
   <v-dialog 
     v-if="isLogin"
-    v-model="dialog"
+    :value="dialog"
     max-width="600px"
     hide-overlay
     :style="{zIndex: 1003}"
+    persistent
+    no-click-animation
   >
     <template #activator="{ on }">
       <v-btn
         icon
         title="Добавить точку оповещения"
         v-on="on"
+        @click="SET_ORDER_DIALOG_STATE(!dialog)"
       >
         <v-icon>
           mdi-clipboard-list-outline
@@ -63,7 +66,7 @@
         <v-btn
           color="blue darken-1"
           text
-          @click="dialog = false"
+          @click="SET_ORDER_DIALOG_STATE(false)"
         >
           Закрыть
         </v-btn>
@@ -80,14 +83,13 @@
 </template>
 
 <script>
-  import {mapState} from "vuex";
-  import notificationApi from "../api/notification";
+import {mapActions, mapMutations, mapState} from "vuex";
+import notificationApi from "../api/notification";
   
   export default {
     name: "OrderNotification",
     data: ()=>({
       flag: false,
-      dialog: false,
       X: null,
       Y: null,
       pointName: null,
@@ -95,22 +97,33 @@
     }),
     computed: {
       ...mapState({
+        clickedPoint: state => state.notification.clickedPoint,
+        dialog: state => state.notification.orderDialogActive,
         isLogin: state => state.auth.isLogin
       })
     },
     watch:{
       dialog(){
         this.shiftTime = new Date().getTimezoneOffset() / 60
+      },
+      clickedPoint(newValue) {
+        this.X = newValue?.lng.toFixed(4)
+        this.Y = newValue?.lat.toFixed(4)
       }
     },
     methods:{
+      ...mapActions(['get_info_points']),
+      ...mapMutations(['SET_ORDER_DIALOG_STATE']),
       requestNotification(){
         notificationApi.order({
           X: this.X,
           Y: this.Y,
           name: this.pointName,
           pointFromUTCOffset:this.shiftTime
-        }).then(() => this.dialog = false)
+        }).then(() => {
+          this.SET_ORDER_DIALOG_STATE(false)
+          this.get_info_points(true)
+        })
       }
     }
   }

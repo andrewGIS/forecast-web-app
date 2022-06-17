@@ -7,4 +7,7 @@ export default {
   listPoints() {
     return client.get("informer/list_points");
   },
+  deletePoint(id) {
+    return client.delete(`informer/order/${id}`);
+  },
 };

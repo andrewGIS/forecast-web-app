@@ -5,6 +5,8 @@ export default {
     infoPoints: null,
     listNotificationPointsActive: false,
     selectedPoint: null,
+    orderDialogActive: false,
+    clickedPoint: null, // точка на карте по которой кликнули для заказа оповещения
   },
   mutations: {
     SET_POINTS(state, data) {
@@ -15,6 +17,12 @@ export default {
     },
     SET_SELECTED_POINT(state, data) {
       state.selectedPoint = data;
+    },
+    SET_ORDER_DIALOG_STATE(state, data) {
+      state.orderDialogActive = data;
+    },
+    SET_CLICKED_POINT(state, data) {
+      state.clickedPoint = data;
     },
   },
   actions: {
@@ -31,6 +39,11 @@ export default {
           commit("SET_POINTS", features);
         });
       }
+    },
+    delete_point({ dispatch }, id) {
+      notificationApi
+        .deletePoint(id)
+        .then(() => dispatch("get_info_points", true));
     },
   },
 };
