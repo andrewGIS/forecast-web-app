@@ -29,6 +29,12 @@
         <v-container>
           <v-row>
             <v-col cols="12">
+              Для того чтобы получать уведомления добавьте бота в&nbsp;<a target="_blank" href="https://t.me/forecast_notificator_bot">телеграм</a>
+              или найдите по идентификатору&nbsp;<b>@forecast_notificator_bot</b>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
               <v-text-field
                 v-model="pointName"
                 label="Название точки "
