@@ -1,7 +1,7 @@
 <template>
   <v-snackbar
     :value="message"
-    :timeout="timeout"
+    timeout="-1"
     bottom
     center
     :style="`bottom: 70px`"
@@ -22,23 +22,15 @@ export default {
   name: "Alert",
   data: () => ({
     isVisible:false,
-    timeout: 4000
   }),
   computed:{
     ...mapState({
       message: state => state.infoservice.message
     })
   },
-  watch:{
-    message(value) {
-      if (value) {
-        this.isVisible = true
-      }
-    }
-  },
   methods:{
     ...mapMutations({deleteMessage: 'REMOVE_MESSAGE'})
-  }
+  },
 };
 </script>
 

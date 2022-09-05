@@ -7,11 +7,11 @@
 </template>
 
 <script>
-import {LGeoJson} from "vue2-leaflet";
-import {mapGetters, mapMutations, mapState} from "vuex";
-import forecastApi from "@/api/forecast";
+  import {LGeoJson} from "vue2-leaflet";
+  import {mapGetters, mapMutations, mapState} from "vuex";
+  import forecastApi from "@/api/forecast";
 
-export default {
+  export default {
   name: "RiskLayer",
   components: { LGeoJson },
   props: {
@@ -99,11 +99,13 @@ export default {
           "group": this.SELECTED_EVENT_GROUP,
           "datatype": "vector",
       };
-      return await forecastApi.forecast(params)
+      const data = await forecastApi.forecast(params)
           .then(r => {
             this.error_get_data = false;
-            if (r.data.features?.length === 0) {
+            if (r.data.features.length === 0) {
               this.ADD_MESSAGE(`Опасных явлений для выбранного времени не обнаружено`);
+              // TODO костыль придумать получше
+              setTimeout(() => this.REMOVE_MESSAGE(), 4000)
             } else {
               this.REMOVE_MESSAGE();
             }
@@ -114,6 +116,7 @@ export default {
             this.error_get_data = true;
             return null
           })
+      return data
     },
     findColor(data, code) {
       const { color } = data.find(({ levelCode }) => levelCode === code);
