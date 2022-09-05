@@ -102,8 +102,10 @@
       const data = await forecastApi.forecast(params)
           .then(r => {
             this.error_get_data = false;
-            if (r.data.features?.length === 0) {
+            if (r.data.features.length === 0) {
               this.ADD_MESSAGE(`Опасных явлений для выбранного времени не обнаружено`);
+              // TODO костыль придумать получше
+              setTimeout(() => this.REMOVE_MESSAGE(), 4000)
             } else {
               this.REMOVE_MESSAGE();
             }
