@@ -7,11 +7,11 @@
 </template>
 
 <script>
-  import {LGeoJson} from "vue2-leaflet";
-  import {mapGetters, mapState} from "vuex";
-  import forecastApi from "@/api/forecast";
+import {LGeoJson} from "vue2-leaflet";
+import {mapGetters, mapMutations, mapState} from "vuex";
+import forecastApi from "@/api/forecast";
 
-  export default {
+export default {
   name: "RiskLayer",
   components: { LGeoJson },
   props: {
@@ -35,7 +35,7 @@
     ...mapState([
       "selectedModel"
     ]),
-    ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP"]),
+    ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP", "SELECTED_LOCAL_HOUR"]),
     geoJSONData() {
       if (this.isVisible && this.data && !this.error_get_data) {
         // return this.$store.getters.GET_FILTERED_GEOJSON;
@@ -53,20 +53,6 @@
         style: this.style,
       };
     },
-    // style() {
-    //   return feature => {
-    //     switch (feature.properties.level_risk) {
-    //       case 1:
-    //         return { fillColor: "#cd363c" , weight: 1, color: "#cd363c"  };
-    //       case 2:
-    //         return { fillColor: "#e24a4b" , weight: 1, color: "#e24a4b"  };
-    //       case 3:
-    //         return { fillColor: "#ff6663" , weight: 1, color: "#ff6663" };
-    //       case 4:
-    //         return { fillColor: "#ff6f6b", weight: 1, color: "#ff6f6b"};
-    //     }
-    //   };
-    // },
     onEachFeature() {
       return (feature, layer) => {
         const tooltipContent = (accumulator, currentValue) =>
@@ -104,6 +90,7 @@
     }
   },
   methods: {
+    ...mapMutations(['ADD_MESSAGE', 'REMOVE_MESSAGE']),
     async getGeoJSONData() {
       const params = {
           "model":this.selectedModel,
@@ -112,9 +99,14 @@
           "group": this.SELECTED_EVENT_GROUP,
           "datatype": "vector",
       };
-      const data = await forecastApi.forecast(params)
+      return await forecastApi.forecast(params)
           .then(r => {
             this.error_get_data = false;
+            if (r.data.features?.length === 0) {
+              this.ADD_MESSAGE(`Опасных явлений для выбранного времени не обнаружено`);
+            } else {
+              this.REMOVE_MESSAGE();
+            }
             return r.data;
           })
           .catch(error => {
@@ -122,11 +114,10 @@
             this.error_get_data = true;
             return null
           })
-      return data
     },
     findColor(data, code) {
       const { color } = data.find(({ levelCode }) => levelCode === code);
-      return { fillColor: color, weight: 1, color };
+      return { fillColor: color, weight: 1, color, fillOpacity: 0.6  };
     }
   }
 };

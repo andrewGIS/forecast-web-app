@@ -146,6 +146,7 @@
           >
             <v-select
               v-model="selectedIndex"
+              max-width="400"
               :items="indexList"
               filled
               dense
@@ -214,12 +215,56 @@ export default {
     indexList: [],
     dialog: false,
     modalinfo: {
-      model: "Модель",
-      eventgroup: "Группа явлений",
+      model: "Метеорологическая модель, на основе которой формируются области опасных явлений",
+      eventgroup: "Группа опасных явлений, которые отображаются на карте",
       forecasttime: "Время прогноза",
-      index: "Диагностические переменные"
+      index: "Диагностические переменные, рассчитанные на основе выбранной метеорологической модели"
     },
-    menusection: "model"
+    menusection: "model",
+    // TODO по возможности перенсти на бек
+    indexesLabels: {
+      icon: {
+        cape_con: 'cape_con',
+        dls: 'dls',
+        htop_con: 'htop_con',
+        k: 'k',
+        lls: 'lls',
+        mls: 'mls',
+        pmsl: 'pmls',
+        t_2m: 'Температура воздуха на уровне 2м',
+        td_2m: 'td_2m',
+        tot_prec: 'tot_prec',
+        tt: 'tt',
+        vmax_10m: 'vmax_10m',
+        ws_10m: 'ws_10m',
+        ww: 'ww'
+      },
+      gfs:{
+          'cape_180-0':'cape_180-0',
+          'cape_255-0':'cape_255-0',
+          cape_surface:'cape_surface',
+          'cin_180-0':'cin_180-0',
+          'cin_255-0':'cin_255-0',
+          cin_surface:'cin_surface',
+          dls:'dls',
+          dpt_2m:'dpt_2m',
+          ehi:'ehi',
+          hlcy:'hlcy',
+          k:'k',
+          lls:'lls',
+          mls:'mls',
+          prate_surface:'prate_surface',
+          pwat:'pwat',
+          rh_900:'rh_900',
+          tmp_2m:'Температура воздуха на уровне 2м',
+          tmp_850:'tmp_850',
+          tmp_900:'tmp_900',
+          tmp_925:'tmp_925',
+          tt:'tt',
+          wmaxshear:'wmaxshear',
+          ws_10m:'ws_10m'
+      }
+    }
   }),
   computed: {
     ...mapState({
@@ -315,7 +360,12 @@ export default {
       forecastApi.indexes(this.selectedModel)
         .then(data => data.data)
         .then(res => {
-          this.indexList = res.indexes;
+          this.indexList = res.indexes.map(index => {
+            return {
+              value: index,
+              text: this.indexesLabels[this.selectedModel][index]
+            }
+          });
           this.setSelectedIndex(res.indexes[0]);
         })
         .catch(() => {

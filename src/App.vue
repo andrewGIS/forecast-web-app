@@ -14,11 +14,10 @@
       <Controls />
     </v-app-bar>
     <v-main>
+      <Alert />
       <Map />
     </v-main>
     <list-points />
-
-
     <Footer />
   </v-app>
 </template>
@@ -28,8 +27,7 @@ import Map from './components/Map';
 import Footer from './components/Footer';
 import Controls from "@/components/Controls";
 import ListPoints from "@/components/ListPoints";
-
-
+import Alert from "@/components/Alert";
 
 export default {
   name: 'App',
@@ -37,7 +35,8 @@ export default {
     ListPoints,
     Map,
     Footer,
-    Controls
+    Controls,
+    Alert
   },
 };
 </script>
