@@ -5,7 +5,7 @@
     hide-overlay
   >
     <template #activator="{ on }">
-      <v-btn icon v-on="on">
+      <v-btn icon title="Войти" v-on="on">
         <v-icon>
           mdi-login
         </v-icon>
