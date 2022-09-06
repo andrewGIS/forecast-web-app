@@ -43,7 +43,7 @@ export default {
   },
   methods:{
     ...mapMutations({deleteMessage: 'REMOVE_MESSAGE'})
-  },
+  }
 };
 </script>
 

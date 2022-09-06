@@ -99,7 +99,7 @@
           "group": this.SELECTED_EVENT_GROUP,
           "datatype": "vector",
       };
-      return await forecastApi.forecast(params)
+      const data = await forecastApi.forecast(params)
           .then(r => {
             this.error_get_data = false;
             if (r.data.features?.length === 0) {
@@ -114,6 +114,7 @@
             this.error_get_data = true;
             return null
           })
+      return data
     },
     findColor(data, code) {
       const { color } = data.find(({ levelCode }) => levelCode === code);
