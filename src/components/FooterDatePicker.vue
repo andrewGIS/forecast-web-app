@@ -34,6 +34,7 @@
         show-arrows
         center-active
         class="d-none d-sm-flex ml-8"
+        mandatory
       >
         <v-slide-item
           v-for="(hour, index) in forecastHours"
