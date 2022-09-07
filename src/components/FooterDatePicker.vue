@@ -21,6 +21,11 @@
           locale="ru-ru"
           :allowed-dates="availableDatesFunc"
         />
+        <div class="date-picker-close-button">
+          <v-btn icon color="white" @click="dateIsActive = !dateIsActive">
+            <v-icon> mdi-close</v-icon>
+          </v-btn>
+        </div>
       </div>
     </v-tooltip>
 
@@ -130,6 +135,12 @@ export default {
 </script>
 
 <style scoped>
+.date-picker-close-button {
+  position: absolute;
+  top: 0;
+  right: 5px;
+}
+
 .v-tooltip__content {
   /*КОСТЫЫЫЛЬ чтобы не был прозрачным календарь*/
   padding: 0px;
