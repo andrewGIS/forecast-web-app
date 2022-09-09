@@ -18,5 +18,11 @@ export default {
   },
   forecast(data) {
     return anonClient.get('get_forecast/', {params: data })
+  },
+  get_index_raster(data) {
+    return anonClient.get('get_index_raster/', {
+      params: data,
+      responseType: 'arraybuffer'
+    })
   }
 }

@@ -115,6 +115,7 @@ export default {
           console.log(error);
           this.availableDates = [];
         })
+    this.setDate(this.selectedDateObj)
   },
   methods: {
     ...mapMutations({

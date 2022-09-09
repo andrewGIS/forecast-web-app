@@ -107,10 +107,10 @@
                 <template #label>
                   <div>Способ отображения прогноза</div>
                 </template>
-                <v-radio
-                  label="Растр"
-                  value="raster"
-                />
+                <!--                <v-radio-->
+                <!--                  label="Растр"-->
+                <!--                  value="raster"-->
+                <!--                />-->
                 <v-radio
                   label="Вектор"
                   value="vector"

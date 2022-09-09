@@ -1,18 +1,16 @@
 <script>
-// TODO Load how to add layer to leaflet map when url return not picture
-// TODO Get boundary by request
-
-// FIXME color map after first load
 import L from "leaflet";
-import { mapMutations, mapState } from "vuex";
+import GeoRasterLayer from 'georaster-layer-for-leaflet';
+import * as parse_georaster from 'georaster';
+import chroma from 'chroma-js';
+import geoblaze from 'geoblaze';
+
+import {mapGetters, mapMutations, mapState} from "vuex";
+import forecastApi from "@/api/forecast";
 
 export default {
   name: "LTiff",
   props: {
-    url: {
-      type: String,
-      required: true
-    },
     isVisible: {
       type: Boolean,
       required: true
@@ -23,7 +21,10 @@ export default {
     }, 
     typeRaster: {
       type: String,
-      required: true
+      required: true,
+      validator(value) {
+        return ['index', 'raster'].includes(value)
+      }
     }
   },
   data: () => ({
@@ -33,15 +34,26 @@ export default {
     popup: null
   }),
   computed: {
-    ...mapState(["selectedModel", "indexColor", "riskColor"])
+    ...mapState([
+      "selectedModel",
+      "indexColor",
+      "riskColor",
+      "selectedIndex",
+      "selectedDate"
+    ]),
+    ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE"]),
+    rasterDataMin() {
+      if (!this.rasterData) return 0;
+      return this.rasterData.mins[0];
+    },
+    rasterDataMax () {
+      if (!this.rasterData) return 0;
+      return this.rasterData.maxs[0];
+    },
   },
   watch: {
-    url() {
-      if (!this.isVisible) return;
-      this.createLayer();
-    },
-    isVisible() {
-      if (this.isVisible) {
+    isVisible(newValue) {
+      if (newValue) {
         if (!this.layer) {
           this.createLayer();
         } else {
@@ -53,20 +65,27 @@ export default {
           this.popup.remove();
         }
       }
+    },
+    async selectedIndex() {
+      if (!this.isVisible) return;
+      if (this.layer) this.layer.remove();
+      await this.createLayer();
+    },
+    async selectedDate() {
+      if (!this.isVisible) return;
+      if (this.layer) this.layer.remove();
+      await this.createLayer();
     }
   },
   beforeMount() {
     this.parentContainer = this.findRealParent(this.$parent);
     this.map = this.parentContainer.mapObject;
-
-    // Получилось подключить бибилотеку только через загрузку скрипта,
-    // а зависимости как ссылки в html (geotiff, d3, chroma)
-    const script = document.createElement("script");
-    //TODO как-то вынести в файлик, чтобы он подгружался
-    script.src =
-      "https://ihcantabria.github.io/Leaflet.CanvasLayer.Field/dist/leaflet.canvaslayer.field.js";
-    script.async = true;
-    document.body.appendChild(script);
+  },
+  mounted() {
+    if(this.infoPopup) {
+      this.popup = new L.popup();
+      this.map.on('click', this.displayPopup);
+    }
   },
   methods: {
     ...mapMutations({
@@ -87,79 +106,56 @@ export default {
       if (!this.isVisible) {
         return;
       }
-      const value = e.value;
-
-      if (value === null || value === undefined) {
+      const latlng = [e.latlng.lng, e.latlng.lat];
+      const value = geoblaze.identify(this.rasterData, latlng);
+      if (value === null || Number.isNaN(value)) {
         this.popup.remove();
         return;
       }
 
-      this.popup.setLatLng([e.latlng.lat, e.latlng.lng]).openOn(this.map);
-
+      this.popup.setLatLng(e.latlng).openOn(this.map);
       this.popup.setContent(
         `Значение растра в точке: ${parseFloat(value).toFixed(2)}`
       );
     },
-    createLayer() {
-      if (!this.rasterData) {
-        // eslint-disable-next-line no-undef
-        d3.request(
-          //`${process.env.VUE_APP_API_BASE}/get_index?model=gfs&date=20210721&forecast_type=00&hour=03&index_name=cape_255-0`
-          //this.url
-          //  'http://localhost:8000/get_tiff'
-            'http://localhost:8000/api/v1/get_raster'
-        )
-          .responseType("blob")
-          .get(async (error, tiffData) => {
-            let data = await tiffData.response.arrayBuffer()
-            this.rasterData = L.ScalarField.fromGeoTIFF(data);
+    async createLayer() {
 
-            // if (this.typeRaster === "index") {
-            //   // this.layer.setFilter(v => v !== 0);
-            //   const f = (v) => v !== 0
-            //   this.$set(this.layer, "_inFilter", f)
-            // }
-            this.setIndexRange(this.rasterData.range);
-
-            this.layer = L.canvasLayer
-              .scalarField(this.rasterData, {
-                // eslint-disable-next-line no-undef
-                color: chroma
-                  .scale(this.typeRaster === "index" ? this.indexColor :this.riskColor)
-                  .domain(this.rasterData.range),
-                opacity: this.opacity
-              })
-              .addTo(this.map);
-
-            if (this.infoPopup) {
-              this.popup = L.popup();
-              this.layer.on("mousemove", e => {
-                this.displayPopup(e);
-              });
-            }
-          });
-      } else {
-        // eslint-disable-next-line no-undef
-        d3.request(this.url)
-          .responseType("arraybuffer")
-          .get((error, tiffData) => {
-            this.rasterData = L.ScalarField.fromGeoTIFF(tiffData.response);
-            this.layer.setData(this.rasterData);
-            this.setIndexRange(this.rasterData.range);
-            // eslint-disable-next-line no-undef
-
-            // if (this.typeRaster === "index") {
-            //   this.layer.setFilter((v) => v !== 0.0)
-            // }
-
-            this.layer.setColor(
-              // eslint-disable-next-line no-undef
-              chroma
-                .scale(this.typeRaster === "index" ? this.indexColor :this.riskColor)
-                .domain(this.rasterData.range)
-            );
-          });
+      const params = {
+        model: this.selectedModel,
+        date: this.SELECTED_DATE,
+        hour: this.SELECTED_HOUR,
+        index_name: this.selectedIndex,
       }
+
+      await forecastApi.get_index_raster(params)
+          .then(response => response.data)
+          .then(arrayBuffer => {
+            parse_georaster(arrayBuffer).then(raster => {
+              this.rasterData = raster;
+              this.setIndexRange([
+                  this.rasterData.mins[0],
+                  this.rasterData.maxs[0]
+              ])
+              this.layer = new GeoRasterLayer({
+                georaster: this.rasterData,
+                opacity: this.opacity,
+                pixelValuesToColorFn: values => {
+                  return this.getColorFromValues(values, this.rasterDataMin, this.rasterDataMax)
+                }
+              });
+              this.layer.addTo(this.map);
+            });
+          });
+    },
+    getColorFromValues(values, min, max) {
+      const band0value = values[0];
+      if (band0value === 0) return null;
+      const colorsPallets = {
+        'index': this.indexColor,
+        'raster': this.riskColor
+      }
+      const colorPallet = colorsPallets[this.typeRaster];
+      return chroma.scale(colorPallet).domain([min, max])(band0value).hex();
     }
   },
   render() {

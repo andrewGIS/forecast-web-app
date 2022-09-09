@@ -14,18 +14,17 @@
       :url="osmURL"
     />
 
-    <l-tiff 
+    <l-tiff
       :is-visible="indexActive"
-      :url="indexURL" 
       :info-popup="true"
       :type-raster="'index'"
     />
-    <l-tiff 
-      :is-visible="selectedDisplayType === 'raster'"
-      :url="rasterURL" 
-      :info-popup="true"
-      :type-raster="'not-index'"
-    />
+    <!--    <l-tiff -->
+    <!--      :is-visible="selectedDisplayType === 'raster'"-->
+    <!--      :url="rasterURL" -->
+    <!--      :info-popup="true"-->
+    <!--      :type-raster="'not-index'"-->
+    <!--    />-->
     <l-control
       v-if="mousePosition"
       position="bottomleft"
@@ -86,21 +85,6 @@ export default {
       ];
       return baseURL + params.join("&");
     },
-    indexURL () {
-      //`http://localhost:5000/api/v1/get_index?model=icon&date=20210721&forecast_type=00&hour=03&index_name=dls`
-      // TODO выпилить
-      const baseURL = `${process.env.VUE_APP_API_BASE}/get_index?`;
-
-      const params = [
-        `model=${this.selectedModel}`,
-        `date=${this.SELECTED_DATE}`,
-        `hour=${this.SELECTED_HOUR}`,
-        `index_name=${this.selectedIndex}`
-      ];
-
-      return baseURL + params.join("&");
-
-    }
   },
   mounted(){
     navigator.geolocation.getCurrentPosition(this.geoSuccess, ()=>{})
