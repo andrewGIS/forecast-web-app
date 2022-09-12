@@ -29,13 +29,14 @@
       }
     ],
     error_get_data: true,
-    style: () => {}
+    style: () => {},
+    onEachFeature: () => {}
   }),
   computed: {
     ...mapState([
       "selectedModel"
     ]),
-    ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP", "SELECTED_LOCAL_HOUR"]),
+    ...mapGetters(["SELECTED_HOUR", "SELECTED_DATE", "SELECTED_EVENT_GROUP"]),
     geoJSONData() {
       if (this.isVisible && this.data && !this.error_get_data) {
         // return this.$store.getters.GET_FILTERED_GEOJSON;
@@ -51,16 +52,6 @@
       return {
         onEachFeature: this.onEachFeature,
         style: this.style,
-      };
-    },
-    onEachFeature() {
-      return (feature, layer) => {
-        const tooltipContent = (accumulator, currentValue) =>
-          accumulator +
-          "<div>" +
-          `${currentValue.alias} : ${feature.properties[currentValue.field]}` +
-          "<div>";
-        layer.bindTooltip(this.tooltipFields.reduce(tooltipContent, ""));
       };
     },
     selectedParams() {
@@ -85,6 +76,12 @@
           .then(r => {
                 this.style = feature => {
                      return this.findColor(r.data, feature.properties.level_code);
+                };
+                this.onEachFeature = (feature, layer) =>{
+                  const tooltipContent = "<div>" +
+                      `Уровень риска: ${this.findAlias(r.data, feature.properties.level_code)}` +
+                      "<div>";
+                  layer.bindTooltip(tooltipContent);
                 };
       });
     }
@@ -119,6 +116,10 @@
     findColor(data, code) {
       const { color } = data.find(({ levelCode }) => levelCode === code);
       return { fillColor: color, weight: 1, color, fillOpacity: 0.6  };
+    },
+    findAlias(data, code) {
+      const { alias } = data.find(({ levelCode }) => levelCode === code);
+      return alias;
     }
   }
 };
